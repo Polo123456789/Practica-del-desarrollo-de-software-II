@@ -31,10 +31,6 @@ def mostrar_trivia():
     #print(preguntas_API)
     return render_template("trivia.html", preguntas=preguntas_API)
 
-@app.route("/trivia")
-def actualizar_trivia():
-    return True
-
 # buscar amigos
 @app.route("/buscaramigos")
 def mostrar_amigos():
