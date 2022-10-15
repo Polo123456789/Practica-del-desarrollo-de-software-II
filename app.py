@@ -1,5 +1,6 @@
 import json
 import urllib.request
+import sys
 
 from flask import Flask, session, render_template
 from flask_sqlalchemy import SQLAlchemy
@@ -19,7 +20,7 @@ class User(db.Model):
     apellidos = db.Column(db.String(30), nullable=False, unique=False)
     fechaNacimiento = db.Column(db.Date(), nullable=False, unique=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
-    contraseña = db.Column(db.String(12), nullable=False, unique=True)
+    contraseña = db.Column(db.String(12), nullable=False, unique=True) # Contraseñas unicas? 12 caracteres para el hash?
     activarCorreos = db.Column(db.Boolean(), nullable=False, unique=False)
     puntuacion = db.Column(db.Integer(), nullable=False, unique=False)
     nivel = db.Column(db.Integer(), nullable=False, unique=False)
@@ -109,5 +110,8 @@ def obtener_preguntas(nivel):
 
 
 if __name__ == "__main__":
-    app.run()
-
+    if len(sys.argv) == 2 and sys.argv[1] == "--create-db":
+        with app.app_context():
+            db.create_all()
+    else:
+        app.run()
