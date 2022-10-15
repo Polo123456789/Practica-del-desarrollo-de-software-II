@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block username %}
-  {{ usuario.nombre }}
+  {{ usuario.nombres }} {{ usuario.apellidos }}
 {% endblock%}
 
 {% block id %}
@@ -22,7 +22,7 @@
 <main class="container mt-5 h-100">
     <div class="d-flex flex-wrap gap-3 justify-content-evenly align-items-center">
       <div class="dashboard-central-element">
-        <img src="avatar.jpeg" alt="Avatar" class="position-absolute top-0 start-0">
+        <img src="{{usuario.avatar}}" alt="Avatar" class="position-absolute top-0 start-0">
       </div>
       <div class="dashboard-central-element">
         <div>
