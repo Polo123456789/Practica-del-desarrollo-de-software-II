@@ -52,10 +52,12 @@ def dashboard():
     # los usuarios la proxima semana
     if not "user" in session:
         session["user"] = {
-            "nombreUsuario": "Usuario anonimo",
-            "id":  12345,
+            "nombres": "Usuario",
+            "apellidos": "anonimo",
+            "idUser":  12345,
             "nivel":  7,
             "puntuacion":  70,
+            "intentosFallidos": 5,
             "avatar":  "/static/img/to-be-determined.gif",
             "lastLogin":  now.strftime(DATETIME_STRING_FORMAT),
         }
@@ -68,17 +70,18 @@ def dashboard():
 
     if timePast.total_seconds() > tenMinutes:
         session["user"]["avatar"] = "/static/img/to-be-determined-sad.gif"
-    
 
-    # Pendiente de tener el template para rellenarlo
-    return json.dumps(session["user"]) # render_template("Dashboard.html")
+    session["user"]["lastLogin"] = now.strftime(DATETIME_STRING_FORMAT)
+
+    
+    return render_template("Dashboard.html", usuario=session["user"])
 
 # --- trivia ---
 @app.route("/trivia")
 def mostrar_trivia():
     preguntas_API = obtener_preguntas(1)
     #print(preguntas_API)
-    return render_template("Trivia.html", preguntas=preguntas_API)
+    return render_template("Trivia.html", usuario=session["user"])
 
 # buscar amigos
 @app.route("/buscaramigos")
@@ -99,6 +102,12 @@ def mostrar_ranking():
 @app.route("/config")
 def mostrar_config():
     return render_template("config.html")
+
+# Unicamente como una utilidad ahora en el desarrollo
+@app.route("/clear-session")
+def limpiar_session():
+    session.clear()
+    return "Listo"
 
 # --- API de preguntas ---
 def obtener_preguntas(nivel):
