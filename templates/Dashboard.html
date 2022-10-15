@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block username %}
+    Pablo Sanchez
+{% endblock%}
+
+{%block progressbar%}
+    <div class="progress-bar" style="width: 70%;"></div>
+{% endblock %}
+
+{% block contenido %}
+
+<main class="container mt-5 h-100">
+    <div class="d-flex flex-wrap gap-3 justify-content-evenly align-items-center">
+      <div class="dashboard-central-element">
+        <img src="avatar.jpeg" alt="Avatar" class="position-absolute top-0 start-0">
+      </div>
+      <div class="dashboard-central-element">
+        <div>
+          <svg xmlns="http://www.w3.org/2000/svg" class="position-absolute top-0 start-0 dashboard-play-button-bg"
+            fill="currentColor" viewBox="0 0 16 16">
+            <path
+              d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814l-3.5-2.5z" />
+          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" class="position-absolute top-0 start-0 dashboard-play-button"
+            fill="currentColor" viewBox="0 0 16 16">
+            <path
+              d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM6.79 5.093A.5.5 0 0 0 6 5.5v5a.5.5 0 0 0 .79.407l3.5-2.5a.5.5 0 0 0 0-.814l-3.5-2.5z" />
+          </svg>
+          <p class="text-center fs-2 my-2">Jugar</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+{% endblock %}
