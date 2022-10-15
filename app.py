@@ -7,6 +7,26 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = "Un valor que cambiaremos cuando vayamos a produccion "
 
+db = SQLAlchemy()
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
+db.init_app(app)
+
+class User(db.Model):
+    #__tablename__ = 'users'
+    idUser = db.Column(db.Integer(), primary_key=True)
+    nombres = db.Column(db.String(30), nullable=False, unique=False)
+    apellidos = db.Column(db.String(30), nullable=False, unique=False)
+    fechaNacimiento = db.Column(db.Date(), nullable=False, unique=False)
+    email = db.Column(db.String(50), nullable=False, unique=True)
+    contraseña = db.Column(db.String(12), nullable=False, unique=True)
+    activarCorreos = db.Column(db.Boolean(), nullable=False, unique=False)
+    puntuacion = db.Column(db.Integer(), nullable=False, unique=False)
+    nivel = db.Column(db.Integer(), nullable=False, unique=False)
+    intentosFallidos = db.Column(db.Integer(), nullable=False, unique=False)
+    avatar = db.Column(db.String(), nullable=False, unique=False)
+    racha = db.Column(db.Integer(), nullable=False, unique=False)
+    ultimaParticipacion = db.Column(db.Date(), nullable=False, unique=False)
+
 DATETIME_STRING_FORMAT = "%d/%m/%Y %M:%H:%S"
 
 # --- definicion de rutas ---
