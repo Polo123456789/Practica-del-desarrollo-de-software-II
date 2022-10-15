@@ -2,6 +2,7 @@ import json
 import urllib.request
 
 from flask import Flask, session, render_template
+from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
