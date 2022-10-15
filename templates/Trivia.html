@@ -1,67 +1,37 @@
 {% extends 'base.html' %}
 
+{% block titulo %}
+  Trivia
+{% endblock %}
+
 {% block username %}
-    Pablo Sanchez
+  usuario.nombre
 {% endblock%}
 
-{%block progressbar%}
+{% block id %}
+  usuario.idUser
+{% endblock %}
+
+{% block progressbar %}
+    <!-- TODO: Agregar calculo -->
     <div class="progress-bar" style="width: 70%;"></div>
 {% endblock %}
 
+{% block nivel %}
+  usuario.nivel
+{% endblock %}
+
 {% block contenido %}
-<main class="d-flex flex-wrap">
-
-</main>
-
-</nav>
-
-<div id="test">
-
-    <input type="radio" name="answer-0" class="correct" id="answer-0-correct" /><input type="radio" name="answer-0" id="answer-0-incorrect" />
-    <input type="radio" name="answer-1" class="correct" id="answer-1-correct" /><input type="radio" name="answer-1" id="answer-1-incorrect" />
-    <input type="radio" name="answer-2" class="correct" id="answer-2-correct" /><input type="radio" name="answer-2" id="answer-2-incorrect" />
-    <input type="radio" name="answer-3" class="correct" id="answer-3-correct" /><input type="radio" name="answer-3" id="answer-3-incorrect" />
-    <input type="radio" name="answer-4" class="correct" id="answer-4-correct" /><input type="radio" name="answer-4" id="answer-4-incorrect" />
-  
-    <div id="questions">
-  
-      <div id="question"></div>
-      
-      <div class="options d-flex flex-column" id="q-0-options">
-        <label for="answer-0-correct">Sí</label>
-        <label for="answer-0-incorrect">No</label>
-        <label for="answer-0-incorrect">Tal vez</label>
-      </div>
-  
-      <div class="options" id="q-1-options">
-        <label for="answer-1-correct">Sí</label>
-        <label for="answer-1-incorrect">No</label>
-        <label for="answer-1-incorrect">Tal vez</label>
-      </div>
-  
-      <div class="options" id="q-2-options">
-        <label for="answer-2-correct">Sí</label>
-        <label for="answer-2-incorrect">No</label>
-        <label for="answer-2-incorrect">Tal vez</label>
-      </div>
-  
-      <div class="options" id="q-3-options">
-        <label for="answer-3-correct">Sí</label>
-        <label for="answer-3-incorrect">No</label>
-        <label for="answer-3-incorrect">Tal vez</label>
-      </div>
-  
-      <div class="options" id="q-4-options">
-        <label for="answer-4-correct">Sí</label>
-        <label for="answer-4-incorrect">No</label>
-        <label for="answer-4-incorrect">Tal vez</label>
-      </div>
-  
+  <div class="d-flex flex-column gap-5">
+    <span class="fs-1">Pregunta</span>
+    <div class="d-flex flex-column gap-2">
+      <div class="rounded m-2 p-4 fs-4 text-white" style="background-color: var(--tg-contrast-1);" >Respuesta 1</div>
+      <div class="rounded m-2 p-4 fs-4 text-white" style="background-color: var(--tg-contrast-1);" >Respuesta 1</div>
+      <div class="rounded m-2 p-4 fs-4 text-white" style="background-color: var(--tg-contrast-1);" >Respuesta 1</div>
     </div>
-    <div id="results">
-      <div><span id="result"></span> Respuestas correctas</div>
-     
+    <div class="d-flex flex-column">
+      <span class="mx-auto">Respuesta correcta/incorrecta</span>
+      <button class="mx-auto btn rounded m-2 p-2 text-white" style="background-color: var(--tg-secondary); max-width: 300px">Continuar/Intentar otra vez</button>
     </div>
   </div>
-
 {% endblock %}

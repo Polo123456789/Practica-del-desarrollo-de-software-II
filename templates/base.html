@@ -2,9 +2,11 @@
 
     Para usar el layout tiene que definir los siguientes bloques:
 
+    * titulo: Titulo de página
     * username: El nombre de usuario
-    * id: 
-    * Contenido
+    * id: Número de usuario
+    * contenido: Contenido individual por cada archivo .html
+    * nivel: El nivel actual del usuario
     * progressbar: La cantidad de progreso que tiene el usuario en el nivel acutal. Tiene que ser un objeto html en la
       forma:
 
@@ -17,12 +19,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard</title>
+  <title>{% block titulo %}{% endblock %}</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Combo">
   <link rel="stylesheet" href="/static/css/styles.css">
-  <link rel="stylesheet" href="/static/css/trivia.css">
+
 </head>
 
 <body>
@@ -94,7 +96,7 @@
 
       <div class="d-flex flex-column">
         <b class="fs-5">{% block username %}{% endblock %}</b>
-        <span class="text-muted">#12345</span>
+        <span class="text-muted">{% block id %}{% endblock %}</span>
       </div>
 
       <div class="flex-grow-1 invisible">
@@ -106,7 +108,7 @@
           <!-- div class="progress-bar" style="width: 70%;"></div -->
           {% block progressbar %} {% endblock %}
         </div>
-        <span><b>Nivel:</b>&nbsp;7</span>
+        <span><b>Nivel:</b>{% block nivel %}{% endblock %}</span>
       </div>
     </div>
   </nav>

@@ -3,9 +3,13 @@ from flask import render_template
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route('/dashboard')
 def Dashboard():
     return render_template("Dashboard.html")
+
+@app.route('/trivia')
+def Trivia():
+    return render_template("Trivia.html")
 
 if __name__ == '__main__':
     app.run(debug = True, port= 8000)
