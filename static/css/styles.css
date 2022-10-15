@@ -1,0 +1,92 @@
+:root {
+    --tg-primary: #FFF9CA;
+    --tg-primary-shaded: #fff28f;
+
+    --tg-secondary: #87BCDE;
+    --tg-secondary-shaded: #5fafe1;
+
+    --tg-contrast-1: #724CF9;
+    --tg-contrast-1-shaded: #4e1dfe;
+
+    --tg-contrast-2: #020202;
+    --tg-contrast-2-shaded: #000000;
+}
+
+body {
+    font-family: 'Combo';
+}
+
+.level-progress-bar {
+    width: clamp(200px, 50vw, 800px);
+}
+
+.level-progress-bar > .progress-bar {
+    background-color: var(--tg-secondary);
+}
+
+.tg-navbar {
+   background-color: var(--tg-primary); 
+}
+
+.dashboard-central-element {
+    position: relative;
+    width: clamp(250px, 40vw, 400px);
+}
+
+.dashboard-central-element::before {
+    content: "";
+    display: block;
+    padding-top: 100%;
+}
+
+.dashboard-play-button-bg {
+    color: var(--tg-contrast-2);
+}
+
+.dashboard-play-button {
+    color: var(--tg-secondary);
+    transition: all 1s;
+}
+
+.dashboard-play-button:hover {
+    color: var(--tg-secondary-shaded);
+    transform: translate(-8px, -8px);
+}
+
+.tg-contrast-1-btn {
+    --bs-btn-color: white;
+    --bs-btn-bg: var(--tg-contrast-1);
+    --bs-btn-hover-color: white;
+    --bs-btn-hover-bg: var(--tg-contrast-1-shaded);
+    --bs-btn-active-color: white;
+    --bs-btn-active-bg: var(--tg-contrast-1-shaded);
+    transition: background-color 1s;
+}
+
+.tg-secondary-btn {
+    --bs-btn-color: white;
+    --bs-btn-bg: var(--tg-secondary);
+    --bs-btn-hover-color: white;
+    --bs-btn-hover-bg: var(--tg-secondary-shaded);
+    --bs-btn-active-color: white;
+    --bs-btn-active-bg: var(--tg-secondary-shaded);
+}
+
+.ranking-list {
+    list-style-position: inside;
+    counter-reset: points 105;
+}
+
+.ranking-list > li {
+    display: block;
+    counter-increment: points -5;
+}
+
+.ranking-list > li > div::before {
+    display: list-item;
+    content: "";
+}
+
+.ranking-list-points::before {
+    content: "Puntuacion: " counter(points);
+}

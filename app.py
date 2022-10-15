@@ -69,14 +69,14 @@ def dashboard():
     
 
     # Pendiente de tener el template para rellenarlo
-    return json.dumps(session["user"])
+    return json.dumps(session["user"]) # render_template("Dashboard.html")
 
 # --- trivia ---
 @app.route("/trivia")
 def mostrar_trivia():
     preguntas_API = obtener_preguntas(1)
     #print(preguntas_API)
-    return render_template("trivia.html", preguntas=preguntas_API)
+    return render_template("Trivia.html", preguntas=preguntas_API)
 
 # buscar amigos
 @app.route("/buscaramigos")
@@ -109,3 +109,4 @@ def obtener_preguntas(nivel):
 
 if __name__ == "__main__":
     app.run()
+
