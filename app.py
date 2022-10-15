@@ -30,11 +30,21 @@ class User(db.Model):
     ultimaParticipacion = db.Column(db.Date(), nullable=False, unique=False)
 
 DATETIME_STRING_FORMAT = "%d/%m/%Y %M:%H:%S"
+POINTS_PER_LEVEL = 25
+POINTS_PER_GOOD_ANSWER = 5
+
+def updateLevelAndGetProgress(user):
+    user["nivel"] = (user["puntuacion"] // POINTS_PER_LEVEL) + 1
+    currentPoints = user["puntuacion"] % POINTS_PER_LEVEL
+    return (currentPoints / POINTS_PER_LEVEL) * 100
 
 # --- definicion de rutas ---
 
 # inicio de sesion
 @app.route("/")
+def index():
+    return render_template("index.html")
+
 @app.route("/login")
 def mostrar_login():
     return render_template("login.html")
@@ -55,9 +65,9 @@ def dashboard():
             "nombres": "Usuario",
             "apellidos": "anonimo",
             "idUser":  12345,
-            "nivel":  7,
-            "puntuacion":  70,
-            "intentosFallidos": 5,
+            "puntuacion":  40,
+            "intentosFallidos": 0,
+            "nivel": 1,
             "avatar":  "/static/img/to-be-determined.gif",
             "lastLogin":  now.strftime(DATETIME_STRING_FORMAT),
         }
@@ -73,16 +83,20 @@ def dashboard():
 
     session["user"]["lastLogin"] = now.strftime(DATETIME_STRING_FORMAT)
 
+    progress = updateLevelAndGetProgress(session["user"])
     
-    return render_template("Dashboard.html", usuario=session["user"])
+    return render_template("Dashboard.html",
+                           usuario=session["user"],
+                           progress=progress)
 
 # --- trivia ---
 @app.route("/trivia")
 def mostrar_trivia():
     pregunta = obtener_preguntas(1)
-    print(pregunta)
+    progress = updateLevelAndGetProgress(session["user"])
     return render_template("Trivia.html",
                            usuario=session["user"],
+                           progress=progress,
                            pregunta=pregunta)
 
 # buscar amigos
