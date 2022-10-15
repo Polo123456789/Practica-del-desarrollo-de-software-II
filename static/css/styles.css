@@ -90,3 +90,11 @@ body {
 .ranking-list-points::before {
     content: "Puntuacion: " counter(points);
 }
+
+.trivia-answer {
+    background-color: var(--tg-contrast-1);
+}
+
+.trivia-answer:hover {
+    background-color: var(--tg-contrast-1-shaded);
+}

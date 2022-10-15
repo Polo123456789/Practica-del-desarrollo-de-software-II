@@ -79,9 +79,11 @@ def dashboard():
 # --- trivia ---
 @app.route("/trivia")
 def mostrar_trivia():
-    preguntas_API = obtener_preguntas(1)
-    #print(preguntas_API)
-    return render_template("Trivia.html", usuario=session["user"])
+    pregunta = obtener_preguntas(1)
+    print(pregunta)
+    return render_template("Trivia.html",
+                           usuario=session["user"],
+                           pregunta=pregunta)
 
 # buscar amigos
 @app.route("/buscaramigos")
@@ -123,4 +125,4 @@ if __name__ == "__main__":
         with app.app_context():
             db.create_all()
     else:
-        app.run()
+        app.run(debug=True)
