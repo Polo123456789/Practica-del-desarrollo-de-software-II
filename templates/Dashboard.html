@@ -13,12 +13,18 @@
 {% endblock %}
 
 {% block progressbar %}
-    <!-- TODO: Agregar calculo -->
-    <div class="progress-bar" style="width: 70%;"></div>
+    <div class="progress-bar" style="width: {{ progress }}%;" title="{{progress}}%"></div>
 {% endblock %}
 
 {% block nivel %}
-  {{ usuario.nivel }}
+<div class="d-flex gap-2">
+  <span>
+   <b>Nivel:</b>&nbsp;{{ usuario.nivel }}
+  </span>
+  <span>
+   <b>Intentos:</b>&nbsp;{{ usuario.intentosFallidos}}
+  </span>
+</div>
 {% endblock %}
 
 {% block contenido %}
@@ -46,4 +52,7 @@
     </div>
   </main>
 
+  <template>
+    {{usuario}}
+  </template>
 {% endblock %}
