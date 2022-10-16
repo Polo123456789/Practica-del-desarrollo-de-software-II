@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% block progressbar %}
-    <div class="progress-bar" style="width: {{ progress }}%;" title="{{progress}}%"></div>
+    <div class="progress-bar" style="width: {{ progress }}%;" title="{{ progress }}%"></div>
 {% endblock %}
 
 {% block nivel %}
@@ -22,7 +22,7 @@
    <b>Nivel:</b>&nbsp;{{ usuario.nivel }}
   </span>
   <span>
-   <b>Intentos:</b>&nbsp;{{ usuario.intentosFallidos}}
+   <b>Intentos:</b>&nbsp;{{ usuario.intentosFallidos }}
   </span>
 </div>
 {% endblock %}
@@ -33,21 +33,33 @@
     <span class="fs-2 text-center">{{ pregunta.pregunta }}</span>
     <div class="d-flex flex-column gap-2">
       <div class="rounded m-2 p-3 fs-5 text-white trivia-answer"
-           tg-is-correct="{{ pregunta.respuesta_1.is_correct }}">
+           tg-is-correct="{{ pregunta.respuesta_1.is_correct }}"
+           id="r1">
         {{ pregunta.respuesta_1.text }}
       </div>
       <div class="rounded m-2 p-3 fs-5 text-white trivia-answer"
-           tg-is-correct="{{ pregunta.respuesta_2.is_correct }}">
+           tg-is-correct="{{ pregunta.respuesta_2.is_correct }}"
+           id="r2">
         {{ pregunta.respuesta_2.text }}
       </div>
       <div class="rounded m-2 p-3 fs-5 text-white trivia-answer"
-           tg-is-correct="{{ pregunta.respuesta_3.is_correct }}">
+           tg-is-correct="{{ pregunta.respuesta_3.is_correct }}"
+           id="r3">
         {{ pregunta.respuesta_3.text }}
       </div>
     </div>
-    <div class="d-flex flex-column">
-      <span class="mx-auto">Respuesta correcta/incorrecta</span>
-      <button class="mx-auto btn tg-secondary-btn">Continuar/Intentar otra vez</button>
+    <div id="result" hidden>
+      <div class="d-flex flex-column">
+        <span class="mx-auto">Respuesta correcta/incorrecta</span>
+        <a class="mx-auto btn tg-secondary-btn">Continuar/Intentar otra vez</a>
+      </div>
     </div>
   </div>
+  <code>
+    {{usuario}}
+  </code>
+{% endblock %}
+
+{% block scripts %}
+  <script src="/static/js/trivia.js"></script>
 {% endblock %}
