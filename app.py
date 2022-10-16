@@ -30,7 +30,7 @@ class User(db.Model):
     racha = db.Column(db.Integer(), nullable=False, unique=False)
     ultimaParticipacion = db.Column(db.Date(), nullable=False, unique=False)
 
-DATETIME_STRING_FORMAT = "%d/%m/%Y %M:%H:%S"
+DATETIME_STRING_FORMAT = "%d/%m/%Y %H:%M:%S"
 POINTS_PER_LEVEL = 25
 POINTS_PER_GOOD_ANSWER = 5
 
@@ -72,7 +72,7 @@ def dashboard():
             "puntuacion":  0,
             "intentosFallidos": 0,
             "nivel": 0,
-            "avatar":  "/static/img/to-be-determined.gif",
+            "avatar":  "/static/img/avatars/standar.gif",
             "lastLogin":  now.strftime(DATETIME_STRING_FORMAT),
         }
 
@@ -80,14 +80,18 @@ def dashboard():
                                   DATETIME_STRING_FORMAT)
     
     timePast = now - lastLogin
-    tenMinutes = 60 * 10
+    timeToGetSadInSeconds = 3
 
-    if timePast.total_seconds() > tenMinutes:
-        session["user"]["avatar"] = "/static/img/to-be-determined-sad.gif"
+    if timePast.total_seconds() > timeToGetSadInSeconds:
+        session["user"]["avatar"] = "/static/img/avatars/sad.gif"
+    else:
+        session['user']['avatar'] = '/static/img/avatars/standar.gif'
 
     session["user"]["lastLogin"] = now.strftime(DATETIME_STRING_FORMAT)
 
     progress = updateLevelAndGetProgress(session["user"])
+
+    session.modified = True
     
     return render_template("Dashboard.html",
                            usuario=session["user"],
