@@ -1,8 +1,9 @@
 import json
+from string import punctuation
 import urllib.request
 import sys
 
-from flask import Flask, session, render_template
+from flask import Flask, session, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -38,6 +39,9 @@ def updateLevelAndGetProgress(user):
     currentPoints = user["puntuacion"] % POINTS_PER_LEVEL
     return (currentPoints / POINTS_PER_LEVEL) * 100
 
+def getCurrentQuestionNo(user):
+    return 1 + (user['puntuacion'] // POINTS_PER_GOOD_ANSWER)
+
 # --- definicion de rutas ---
 
 # inicio de sesion
@@ -65,9 +69,9 @@ def dashboard():
             "nombres": "Usuario",
             "apellidos": "anonimo",
             "idUser":  12345,
-            "puntuacion":  40,
+            "puntuacion":  0,
             "intentosFallidos": 0,
-            "nivel": 1,
+            "nivel": 0,
             "avatar":  "/static/img/to-be-determined.gif",
             "lastLogin":  now.strftime(DATETIME_STRING_FORMAT),
         }
@@ -90,14 +94,27 @@ def dashboard():
                            progress=progress)
 
 # --- trivia ---
-@app.route("/trivia")
+@app.route("/trivia", methods=['GET', 'POST'])
 def mostrar_trivia():
-    pregunta = obtener_preguntas(1)
-    progress = updateLevelAndGetProgress(session["user"])
-    return render_template("Trivia.html",
-                           usuario=session["user"],
-                           progress=progress,
-                           pregunta=pregunta)
+    if request.method == 'GET':
+        noPregunta = getCurrentQuestionNo(session['user'])
+        pregunta = obtener_preguntas(noPregunta)
+        progress = updateLevelAndGetProgress(session["user"])
+        return render_template("Trivia.html",
+                            usuario={**session["user"], "noPregunta": noPregunta},
+                            progress=progress,
+                            pregunta=pregunta)
+    else:
+        print(request.json)
+        correct = request.json['correct']
+        if correct:
+            session['user']['puntuacion'] += POINTS_PER_GOOD_ANSWER
+        else:
+            session['user']['intentosFallidos'] += 1
+
+        session.modified = True
+
+        return jsonify({"msg": "Actualizado correctamente"})
 
 # buscar amigos
 @app.route("/buscaramigos")
