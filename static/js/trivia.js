@@ -1,3 +1,5 @@
+let done = false;
+
 const answers = [
     document.querySelector("#r1"),
     document.querySelector("#r2"),
@@ -5,7 +7,6 @@ const answers = [
 ];
 
 const result = document.querySelector("#result"); 
-
 
 /**
  * @param {HTMLElement} answer
@@ -47,9 +48,13 @@ const showResult = (correct) => {
 
 for (const answer of answers) {
     answer.addEventListener("click", () => {
+        if (done) {
+            return;
+        }
         result.removeAttribute("hidden")
         const correct = isCorrect(answer);
         sendResponse(correct);
         showResult(correct);
+        done = true;
     })
 }
