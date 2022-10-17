@@ -33,15 +33,13 @@ const sendResponse = async (correct) => {
 /** @param {boolean} correct */
 const showResult = (correct) => {
     const texto = result.querySelector("span");
-    const link = result.querySelector("a")
+    const link = result.querySelector("a#continue")
     if (correct) {
         texto.innerText = "Respuesta Correcta";
         link.innerText = "Continuar";
-        link.href = "/dashboard";
     } else {
         texto.innerText = "Respuesta Incorrecta";
-        link.innerText = "Regresar";
-        link.href = "/dashboard";
+        link.innerText = "Volver a intentar";
     }
 }
 
