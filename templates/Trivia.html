@@ -49,9 +49,14 @@
       </div>
     </div>
     <div id="result" hidden>
-      <div class="d-flex flex-column">
+      <div class="d-flex flex-column gap-3">
         <span class="mx-auto">Respuesta correcta/incorrecta</span>
-        <a class="mx-auto btn tg-secondary-btn">Continuar/Intentar otra vez</a>
+        <div class="d-flex justify-content-center gap-5">
+          <a href="/dashboard" class="btn tg-secondary-btn">Regresar</a>
+          <a id="continue" class="btn tg-secondary-btn" href="/trivia">
+            Continuar/Intentar otra vez
+          </a>
+        </div>
       </div>
     </div>
   </div>
