@@ -3,12 +3,16 @@ from string import punctuation
 import urllib.request
 import sys
 
-from flask import Flask, session, render_template, request, jsonify
+from flask import Flask, session, render_template, request, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
+from wtforms import Form, StringField, PasswordField
+from wtforms.validators import Regexp, Length, DataRequired
+
 app = Flask(__name__)
 app.secret_key = "Un valor que cambiaremos cuando vayamos a produccion "
+
 
 db = SQLAlchemy()
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
@@ -16,7 +20,7 @@ db.init_app(app)
 
 class User(db.Model):
     #__tablename__ = 'users'
-    idUser = db.Column(db.Integer(), primary_key=True)
+    idUser = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     nombres = db.Column(db.String(30), nullable=False, unique=False)
     apellidos = db.Column(db.String(30), nullable=False, unique=False)
     fechaNacimiento = db.Column(db.Date(), nullable=False, unique=False)
@@ -29,6 +33,24 @@ class User(db.Model):
     avatar = db.Column(db.String(), nullable=False, unique=False)
     racha = db.Column(db.Integer(), nullable=False, unique=False)
     ultimaParticipacion = db.Column(db.Date(), nullable=False, unique=False)
+
+
+class RegistrationForm(Form):
+    nombres = StringField('nombres', validators=[DataRequired(),
+                                                 Length(min=2, max=30),
+                                                 Regexp("[^0-9\.\,\"\?\!\;\:\#\$\%\&\(\)\*\+\-\/\<\>\=\@\[\]\\\^\_\{\}\|\~]+")])
+    apellidos = StringField('apellidos', validators=[DataRequired(),
+                                                     Length(min=2, max=30),
+                                                     Regexp("[^0-9\.\,\"\?\!\;\:\#\$\%\&\(\)\*\+\-\/\<\>\=\@\[\]\\\^\_\{\}\|\~]+")])
+    nac = StringField('nac', validators=[DataRequired()])
+    correo = StringField('correo', validators=[DataRequired(),
+                                               Regexp("\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b")])
+    contraseña = PasswordField('contraseña', validators=[DataRequired(),
+                                                         Length(min=6, max=12),
+                                                         Regexp("^(?=.*\d)(?=\S)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])$")])
+    #confirm = PasswordField('Repeat Password')
+    #accept_tos = BooleanField('I accept the TOS', [validators.DataRequired()])
+
 
 DATETIME_STRING_FORMAT = "%d/%m/%Y %H:%M:%S"
 POINTS_PER_LEVEL = 25
@@ -54,9 +76,14 @@ def mostrar_login():
     return render_template("login.html")
 
 # registro
-@app.route("/registrarse")
-def mostrar_registro():
-    return render_template("registro.html")
+@app.route("/registro", methods=['GET', 'POST'])
+def register():
+    form = RegistrationForm(request.form)
+    if request.method == 'POST' and form.validate():
+        print(form)
+        return redirect(url_for('dashboard'))
+    print("registration fail")
+    return render_template('registro.html', form=form)
 
 @app.route("/dashboard")
 def dashboard():
