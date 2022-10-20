@@ -1,4 +1,9 @@
-// @ts-check
+/*
+ * NOTA: No contiene validaciones para el email, de esas se encarga el navegador
+ * 
+ * TODO: Explicar como aplicar las validaciones
+ */
+
 
 /**
  * @param {string} selector 
@@ -157,4 +162,27 @@ const validatePassword = (event) => {
     }
 }
 
-applyTextValidator("#input", validatePassword);
+const applyDateValidation = (selector) => {
+  /** @type HTMLInputElement */
+  const element = document.querySelector(selector);
+
+  const today = new Date();
+  today.setUTCHours(0, 0, 0, 0);
+  const minimum = new Date("1922-01-01");
+
+  element.addEventListener("change", () => {
+    const selected = new Date(element.value);
+
+    if (minimum.getTime() > selected.getTime()) {
+        setInvalid(element,
+                   `La fecha tiene que ser mayor al 1 de enero de 1922`);
+        return;
+    }
+
+    if (today.getTime() <= selected.getTime()) {
+        setInvalid(element,
+                   `La fecha tiene que ser anterior a el dia de hoy`);
+        return;
+    }
+  });
+}
