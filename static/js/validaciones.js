@@ -1,9 +1,21 @@
 /*
  * NOTA: No contiene validaciones para el email, de esas se encarga el navegador
  * 
- * TODO: Explicar como aplicar las validaciones
+ * Uso:
+ *  Para los campos de texto, aplique la validacion utilizando la funcion
+ *  `applyTextValidator`. EL primer argumento es el selector del input a
+ *  validar, el segundo es la funcion de validacion a utilizar.
+ * 
+ *  Para el campo de fecha puede utilizar la funcion `applyDateValidation`.
+ *  Como unico argumento recibe el selector de el input que recibe la fecha.
+ *      
+ * Ejemplo:
+ * 
+ *      applyTextValidator("#idCampoNombres", validateName);
+ *      applyTextValidator("#idCamposApellidos", validateName);
+ *      applyTextValidator("#idCampoContraseña", validatePassword);
+ *      applyDateValidation("#idCampoFecha");
  */
-
 
 /**
  * @param {string} selector 
@@ -161,6 +173,7 @@ const validatePassword = (event) => {
                    `Las contraseñas no pueden contener espacios`)
     }
 }
+
 
 const applyDateValidation = (selector) => {
   /** @type HTMLInputElement */
