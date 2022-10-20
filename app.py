@@ -23,31 +23,31 @@ class User(db.Model):
     idUser = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     nombres = db.Column(db.String(30), nullable=False, unique=False)
     apellidos = db.Column(db.String(30), nullable=False, unique=False)
-    fechaNacimiento = db.Column(db.Date(), nullable=False, unique=False)
+    fechaNacimiento = db.Column(db.String(), nullable=False, unique=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
     contraseña = db.Column(db.String(12), nullable=False, unique=True) # Contraseñas unicas? 12 caracteres para el hash?
-    activarCorreos = db.Column(db.Boolean(), nullable=False, unique=False)
-    puntuacion = db.Column(db.Integer(), nullable=False, unique=False)
-    nivel = db.Column(db.Integer(), nullable=False, unique=False)
-    intentosFallidos = db.Column(db.Integer(), nullable=False, unique=False)
-    avatar = db.Column(db.String(), nullable=False, unique=False)
-    racha = db.Column(db.Integer(), nullable=False, unique=False)
-    ultimaParticipacion = db.Column(db.Date(), nullable=False, unique=False)
+    #activarCorreos = db.Column(db.Boolean(), nullable=False, unique=False)
+    #puntuacion = db.Column(db.Integer(), nullable=False, unique=False)
+    #nivel = db.Column(db.Integer(), nullable=False, unique=False)
+    #intentosFallidos = db.Column(db.Integer(), nullable=False, unique=False)
+    #avatar = db.Column(db.String(), nullable=False, unique=False)
+    #racha = db.Column(db.Integer(), nullable=False, unique=False)
+    #ultimaParticipacion = db.Column(db.Date(), nullable=False, unique=False)
 
 
 class RegistrationForm(Form):
     nombres = StringField('nombres', validators=[DataRequired(),
                                                  Length(min=2, max=30),
-                                                 Regexp("[^0-9\.\,\"\?\!\;\:\#\$\%\&\(\)\*\+\-\/\<\>\=\@\[\]\\\^\_\{\}\|\~]+")])
+                                                 Regexp("[^0-9\.\,\"\?\!\;\:\#\$\%\&\(\)\*\+\-\/\<\>\=\@\[\]\\\^\_\{\}\|\~]+", message='error en nombres')])
     apellidos = StringField('apellidos', validators=[DataRequired(),
                                                      Length(min=2, max=30),
-                                                     Regexp("[^0-9\.\,\"\?\!\;\:\#\$\%\&\(\)\*\+\-\/\<\>\=\@\[\]\\\^\_\{\}\|\~]+")])
+                                                     Regexp("[^0-9\.\,\"\?\!\;\:\#\$\%\&\(\)\*\+\-\/\<\>\=\@\[\]\\\^\_\{\}\|\~]+", message='error en apellidos')])
     nac = StringField('nac', validators=[DataRequired()])
     correo = StringField('correo', validators=[DataRequired(),
-                                               Regexp("\b[\w\.-]+@[\w\.-]+\.\w{2,4}\b")])
+                                               Regexp("", message='error en correo')])
     contraseña = PasswordField('contraseña', validators=[DataRequired(),
                                                          Length(min=6, max=12),
-                                                         Regexp("^(?=.*\d)(?=\S)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z])$")])
+                                                         Regexp("", message='error en contrasena')])
     #confirm = PasswordField('Repeat Password')
     #accept_tos = BooleanField('I accept the TOS', [validators.DataRequired()])
 
@@ -80,9 +80,24 @@ def mostrar_login():
 def register():
     form = RegistrationForm(request.form)
     if request.method == 'POST' and form.validate():
-        print(form)
+        nombres = form.nombres.data
+        buscar_usuario = db.session.execute(db.select(User).filter_by(nombres=nombres)).one()
+        if buscar_usuario:
+            return render_template('registro.html', form=form)
+        else:
+            user = User(
+                nombres=form.nombres.data,
+                apellidos=form.apellidos.data,
+                fechaNacimiento= form.nac.data,
+                email=form.correo.data,
+                contraseña=form.contraseña.data
+            )
+            db.session.add(user)
+            db.session.commit()
+            return redirect(url_for('dashboard'))
         return redirect(url_for('dashboard'))
     print("registration fail")
+    print(form.errors.values())
     return render_template('registro.html', form=form)
 
 @app.route("/dashboard")
