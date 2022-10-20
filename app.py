@@ -3,9 +3,9 @@ from string import punctuation
 import urllib.request
 import sys
 
-from flask import Flask, session, render_template, request, jsonify, redirect, url_for
+from flask import Flask, session, render_template, request, jsonify, redirect, url_for, session
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import datetime, date
 
 from wtforms import Form, StringField, PasswordField
 from wtforms.validators import Regexp, Length, DataRequired
@@ -23,33 +23,16 @@ class User(db.Model):
     idUser = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     nombres = db.Column(db.String(30), nullable=False, unique=False)
     apellidos = db.Column(db.String(30), nullable=False, unique=False)
-    fechaNacimiento = db.Column(db.String(), nullable=False, unique=False)
+    fechaNacimiento = db.Column(db.Date(), nullable=False, unique=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
-    contraseña = db.Column(db.String(12), nullable=False, unique=True) # Contraseñas unicas? 12 caracteres para el hash?
-    #activarCorreos = db.Column(db.Boolean(), nullable=False, unique=False)
-    #puntuacion = db.Column(db.Integer(), nullable=False, unique=False)
-    #nivel = db.Column(db.Integer(), nullable=False, unique=False)
-    #intentosFallidos = db.Column(db.Integer(), nullable=False, unique=False)
-    #avatar = db.Column(db.String(), nullable=False, unique=False)
-    #racha = db.Column(db.Integer(), nullable=False, unique=False)
-    #ultimaParticipacion = db.Column(db.Date(), nullable=False, unique=False)
-
-
-class RegistrationForm(Form):
-    nombres = StringField('nombres', validators=[DataRequired(),
-                                                 Length(min=2, max=30),
-                                                 Regexp("[^0-9\.\,\"\?\!\;\:\#\$\%\&\(\)\*\+\-\/\<\>\=\@\[\]\\\^\_\{\}\|\~]+", message='error en nombres')])
-    apellidos = StringField('apellidos', validators=[DataRequired(),
-                                                     Length(min=2, max=30),
-                                                     Regexp("[^0-9\.\,\"\?\!\;\:\#\$\%\&\(\)\*\+\-\/\<\>\=\@\[\]\\\^\_\{\}\|\~]+", message='error en apellidos')])
-    nac = StringField('nac', validators=[DataRequired()])
-    correo = StringField('correo', validators=[DataRequired(),
-                                               Regexp("", message='error en correo')])
-    contraseña = PasswordField('contraseña', validators=[DataRequired(),
-                                                         Length(min=6, max=12),
-                                                         Regexp("", message='error en contrasena')])
-    #confirm = PasswordField('Repeat Password')
-    #accept_tos = BooleanField('I accept the TOS', [validators.DataRequired()])
+    contraseña = db.Column(db.String(12), nullable=False) # Contraseñas unicas? 12 caracteres para el hash?
+    activarCorreos = db.Column(db.Boolean(), nullable=False, unique=False)
+    puntuacion = db.Column(db.Integer(), nullable=False, unique=False)
+    nivel = db.Column(db.Integer(), nullable=False, unique=False)
+    intentosFallidos = db.Column(db.Integer(), nullable=False, unique=False)
+    avatar = db.Column(db.String(), nullable=False, unique=False)
+    racha = db.Column(db.Integer(), nullable=False, unique=False)
+    ultimaParticipacion = db.Column(db.Date(), nullable=False, unique=False)
 
 
 DATETIME_STRING_FORMAT = "%d/%m/%Y %H:%M:%S"
@@ -78,27 +61,52 @@ def mostrar_login():
 # registro
 @app.route("/registro", methods=['GET', 'POST'])
 def register():
-    form = RegistrationForm(request.form)
-    if request.method == 'POST' and form.validate():
-        nombres = form.nombres.data
-        buscar_usuario = db.session.execute(db.select(User).filter_by(nombres=nombres)).one()
+    if request.method == 'POST':
+        form = request.form
+        nombres = form["nombres"]
+        apellidos = form["apellidos"]
+
+
+        nac = form["nac"] #str type,
+
+
+        email = form["correo"]
+        contraseña = form["contraseña"]
+
+        #test_date = date(nac)
+        print(nac)
+        print(type(nac))
+        #print(test_date)
+        #print(type(test_date))
+
+
+        buscar_usuario = False#db.session.execute(db.select(User).filter_by(nombres=nombres)).one()
         if buscar_usuario:
             return render_template('registro.html', form=form)
         else:
+            now = datetime.now()
             user = User(
-                nombres=form.nombres.data,
-                apellidos=form.apellidos.data,
-                fechaNacimiento= form.nac.data,
-                email=form.correo.data,
-                contraseña=form.contraseña.data
+                nombres = nombres,
+                apellidos = apellidos,
+                fechaNacimiento = nac,
+                email = email,
+                contraseña = contraseña,
+                activarCorreos = False,
+                puntuacion = 0,
+                nivel = 0,
+                intentosFallidos = 0,
+                avatar = "avatar",
+                racha = 0,
+                ultimaParticipacion = datetime.date(datetime.now())
             )
+            print(User)
             db.session.add(user)
             db.session.commit()
+            session["user"] = nombres
             return redirect(url_for('dashboard'))
         return redirect(url_for('dashboard'))
     print("registration fail")
-    print(form.errors.values())
-    return render_template('registro.html', form=form)
+    return render_template('registro.html')
 
 @app.route("/dashboard")
 def dashboard():
@@ -107,20 +115,11 @@ def dashboard():
     # Le daremos unos valores default a las sesiones en lo que implementamos
     # los usuarios la proxima semana
     if not "user" in session:
-        session["user"] = {
-            "nombres": "Usuario",
-            "apellidos": "anonimo",
-            "idUser":  12345,
-            "puntuacion":  0,
-            "intentosFallidos": 0,
-            "nivel": 0,
-            "avatar":  "/static/img/avatars/standar.gif",
-            "lastLogin":  now.strftime(DATETIME_STRING_FORMAT),
-        }
+        render_template("login.html")
 
-    lastLogin = datetime.strptime(session["user"]["lastLogin"],
+    lastLogin = datetime.strptime(session["user"]["ultimaParticipacion"],
                                   DATETIME_STRING_FORMAT)
-    
+
     timePast = now - lastLogin
     timeToGetSadInSeconds = 3
 
