@@ -51,12 +51,19 @@ def getCurrentQuestionNo(user):
 
 # inicio de sesion
 @app.route("/")
-def index():
-    return render_template("index.html")
-
-@app.route("/login")
+@app.route("/login", methods=['GET', 'POST'])
 def mostrar_login():
-    return render_template("login.html")
+    if request.method == 'POST':
+        form = request.form
+        nombres = form["nombres"]
+        contraseña = form["contraseña"]
+        user = db.session.execute(db.select(User).filter_by(nombres=nombres)).one()
+        if user:
+            return redirect(url_for('dashboard'))
+        else:
+            return render_template("login.html")
+    else:
+        return render_template("login.html")
 
 # registro
 @app.route("/registro", methods=['GET', 'POST'])
