@@ -7,9 +7,6 @@ from flask import Flask, session, render_template, request, jsonify, redirect, u
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, date
 
-from wtforms import Form, StringField, PasswordField
-from wtforms.validators import Regexp, Length, DataRequired
-
 app = Flask(__name__)
 app.secret_key = "Un valor que cambiaremos cuando vayamos a produccion "
 
@@ -66,9 +63,7 @@ def register():
         nombres = form["nombres"]
         apellidos = form["apellidos"]
 
-
         nac = form["nac"] #str type,
-
 
         email = form["correo"]
         contraseña = form["contraseña"]
