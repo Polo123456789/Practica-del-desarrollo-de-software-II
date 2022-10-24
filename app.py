@@ -5,7 +5,7 @@ import sys
 
 from flask import Flask, session, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from datetime import datetime
+from datetime import date, datetime
 
 app = Flask(__name__)
 app.secret_key = "Un valor que cambiaremos cuando vayamos a produccion "
@@ -21,14 +21,33 @@ class User(db.Model):
     apellidos = db.Column(db.String(30), nullable=False, unique=False)
     fechaNacimiento = db.Column(db.Date(), nullable=False, unique=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
-    contraseña = db.Column(db.String(12), nullable=False, unique=True) # Contraseñas unicas? 12 caracteres para el hash?
+    contraseña = db.Column(db.String(60), nullable=False, unique=False) 
     activarCorreos = db.Column(db.Boolean(), nullable=False, unique=False)
     puntuacion = db.Column(db.Integer(), nullable=False, unique=False)
     nivel = db.Column(db.Integer(), nullable=False, unique=False)
     intentosFallidos = db.Column(db.Integer(), nullable=False, unique=False)
-    avatar = db.Column(db.String(), nullable=False, unique=False)
+    avatar = db.Column(db.Integer(), nullable=False, unique=False)
     racha = db.Column(db.Integer(), nullable=False, unique=False)
     ultimaParticipacion = db.Column(db.Date(), nullable=False, unique=False)
+    administrador = db.Column(db.Boolean(), nullable=False, unique=False)
+    
+class Friendship(db.Model):
+    #__tablename__ = 'friendship'
+    idRemitente = db.Column(db.Integer(), db.ForeignKey('user.idUser'), primary_key=True)
+    idReceptor = db.Column(db.Integer(), db.ForeignKey('user.idUser'), primary_key=True)
+    estadoSolicitud = db.Column(db.Boolean())
+    creacion = db.Column(db.DateTime())
+    remitente = db.relationship("User", foreign_keys=[idRemitente], backref="invitacionesRecibidas")
+    receptor = db.relationship("User", foreign_keys=[idReceptor], backref="invitacionesEnviadas")
+
+class Cache(db.Model):
+    #__tablename__ = 'cache'
+    idPregunta = db.Column(db.Integer(), primary_key=True)
+    pregunta = db.Column(db.String(), nullable=False, unique=False)    
+    opcion1 = db.Column(db.String(), nullable=False, unique=False)
+    opcion2 = db.Column(db.String(), nullable=False, unique=False)
+    opcion2 = db.Column(db.String(), nullable=False, unique=False)
+    opCorrecta = db.Column(db.String(), nullable=False, unique=False)
 
 DATETIME_STRING_FORMAT = "%d/%m/%Y %H:%M:%S"
 POINTS_PER_LEVEL = 25
@@ -159,5 +178,25 @@ if __name__ == "__main__":
     if len(sys.argv) == 2 and sys.argv[1] == "--create-db":
         with app.app_context():
             db.create_all()
+
+            User1= User(
+                nombres ="Elian André", 
+                apellidos = "Reyes Mox", 
+                fechaNacimiento = date.today(),
+                email = "administrador@gmail.com", 
+                contraseña = "Abc123!", 
+                activarCorreos = 1, 
+                puntuacion = 0, 
+                nivel = 0, 
+                intentosFallidos = 0, 
+                avatar = 0, 
+                racha = 0, 
+                ultimaParticipacion = date.today(), 
+                administrador = 1
+            )
+
+        db.session.add(User1)
+        db.session.commit()
+        
     else:
         app.run(debug=True)
