@@ -7,14 +7,11 @@ from flask import Flask, session, render_template, request, jsonify, redirect, u
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, date
 
-from flask_session import Session
+from wtforms import Form, StringField, PasswordField
+from wtforms.validators import Regexp, Length, DataRequired
 
 app = Flask(__name__)
 app.secret_key = "Un valor que cambiaremos cuando vayamos a produccion "
-
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
-Session(app)
 
 
 db = SQLAlchemy()
@@ -54,20 +51,12 @@ def getCurrentQuestionNo(user):
 
 # inicio de sesion
 @app.route("/")
-@app.route("/login", methods=['GET', 'POST'])
+def index():
+    return render_template("index.html")
+
+@app.route("/login")
 def mostrar_login():
-    if request.method == 'POST':
-        form = request.form
-        nombres = form["nombres"]
-        contraseña = form["contraseña"]
-        user = db.session.execute(db.select(User).filter_by(nombres=nombres)).one()
-        session["nombres"] = nombres
-        if user:
-            return redirect(url_for('dashboard'), usuario=user)
-        else:
-            return render_template("login.html")
-    else:
-        return render_template("login.html")
+    return render_template("login.html")
 
 # registro
 @app.route("/registro", methods=['GET', 'POST'])
@@ -76,34 +65,48 @@ def register():
         form = request.form
         nombres = form["nombres"]
         apellidos = form["apellidos"]
-        nac = form["nac"] #str type
-        nac_date = datetime.strptime(nac, "%m/%d/%Y")
+
+
+        nac = form["nac"] #str type,
+
+
         email = form["correo"]
         contraseña = form["contraseña"]
-        avatar = form["avatar"]
-        now = datetime.now()
-        user = User(
-            nombres = nombres,
-            apellidos =apellidos,
-            fechaNacimiento = nac_date,
-            activarCorreos = False,
-            puntuacion = 0,
-            nivel = 0,
-            intentosFallidos = 0,
-            avatar = avatar,
-            racha = 0,
-            ultimaParticipacion = now.strftime(DATETIME_STRING_FORMAT)
-        )
+
+        #test_date = date(nac)
+        print(nac)
+        print(type(nac))
+        #print(test_date)
+        #print(type(test_date))
+
+
         buscar_usuario = False#db.session.execute(db.select(User).filter_by(nombres=nombres)).one()
         if buscar_usuario:
             return render_template('registro.html', form=form)
         else:
+            now = datetime.now()
+            user = User(
+                nombres = nombres,
+                apellidos = apellidos,
+                fechaNacimiento = nac,
+                email = email,
+                contraseña = contraseña,
+                activarCorreos = False,
+                puntuacion = 0,
+                nivel = 0,
+                intentosFallidos = 0,
+                avatar = "avatar",
+                racha = 0,
+                ultimaParticipacion = datetime.date(datetime.now())
+            )
+            print(User)
             db.session.add(user)
             db.session.commit()
-            return redirect(url_for('dashboard'), usuario=user)
+            session["user"] = nombres
+            return redirect(url_for('dashboard'))
+        return redirect(url_for('dashboard'))
     print("registration fail")
     return render_template('registro.html')
-
 
 @app.route("/dashboard")
 def dashboard():
@@ -112,18 +115,9 @@ def dashboard():
     # Le daremos unos valores default a las sesiones en lo que implementamos
     # los usuarios la proxima semana
     if not "user" in session:
-        session["user"] = {
-            "nombres": "Usuario",
-            "apellidos": "anonimo",
-            "idUser": 12345,
-            "puntuacion": 0,
-            "intentosFallidos": 0,
-            "nivel": 0,
-            "avatar": "/static/img/avatars/standar.gif",
-            "lastLogin": now.strftime(DATETIME_STRING_FORMAT),
-        }
+        render_template("login.html")
 
-    lastLogin = datetime.strptime(session["user"]["lastLogin"],
+    lastLogin = datetime.strptime(session["user"]["ultimaParticipacion"],
                                   DATETIME_STRING_FORMAT)
 
     timePast = now - lastLogin
@@ -139,7 +133,7 @@ def dashboard():
     progress = updateLevelAndGetProgress(session["user"])
 
     session.modified = True
-
+    
     return render_template("Dashboard.html",
                            usuario=session["user"],
                            progress=progress)
