@@ -59,16 +59,17 @@ DATE_STRING_FORMAT = "%Y-%m-%d"
 DATETIME_STRING_FORMAT = "%d/%m/%Y %H:%M:%S"
 POINTS_PER_LEVEL = 25
 POINTS_PER_GOOD_ANSWER = 5
+DAYS_TO_GET_SAD = 7
 
 
 def updateLevelAndGetProgress(user):
-    user["nivel"] = (user["puntuacion"] // POINTS_PER_LEVEL) + 1
-    currentPoints = user["puntuacion"] % POINTS_PER_LEVEL
+    user.nivel = (user.puntuacion // POINTS_PER_LEVEL) + 1
+    currentPoints = user.puntuacion % POINTS_PER_LEVEL
     return (currentPoints / POINTS_PER_LEVEL) * 100
 
 
 def getCurrentQuestionNo(user):
-    return 1 + (user['puntuacion'] // POINTS_PER_GOOD_ANSWER)
+    return 1 + (user.puntuacion // POINTS_PER_GOOD_ANSWER)
 
 
 def requires_login(fn):
@@ -83,7 +84,7 @@ def requires_login(fn):
     return wrapper
 
 
-def get_user():
+def get_user() -> User:
     return User.query.filter_by(email=session["user"]).first()
 
 
@@ -160,6 +161,7 @@ def register():
         db.session.commit()
 
         session["user"] = email;
+        session.permanent = True
 
         return redirect(url_for('dashboard'))
 
@@ -169,42 +171,22 @@ def register():
 @app.route("/dashboard")
 @requires_login
 def dashboard():
-    now = datetime.now()
+    user = get_user()
+    today = date.today()
+    avatarVariant = "normal"
 
-    # Le daremos unos valores default a las sesiones en lo que implementamos
-    # los usuarios la proxima semana
-    if not "user" in session:
-        session["user"] = {
-            "nombres": "Usuario",
-            "apellidos": "anonimo",
-            "idUser": 12345,
-            "puntuacion": 0,
-            "intentosFallidos": 0,
-            "nivel": 0,
-            "avatar": "/static/img/avatars/standar.gif",
-            "lastLogin": now.strftime(DATETIME_STRING_FORMAT),
-        }
+    
+    delta = today - user.ultimaParticipacion
+    if delta.days >= 7:
+        avatarVariant = "sad"
 
-    lastLogin = datetime.strptime(session["user"]["lastLogin"],
-                                  DATETIME_STRING_FORMAT)
-
-    timePast = now - lastLogin
-    timeToGetSadInSeconds = 3
-
-    if timePast.total_seconds() > timeToGetSadInSeconds:
-        session["user"]["avatar"] = "/static/img/avatars/sad.gif"
-    else:
-        session['user']['avatar'] = '/static/img/avatars/standar.gif'
-
-    session["user"]["lastLogin"] = now.strftime(DATETIME_STRING_FORMAT)
-
-    progress = updateLevelAndGetProgress(session["user"])
-
-    session.modified = True
+    progress = updateLevelAndGetProgress(user)
+    db.session.commit()
 
     return render_template("Dashboard.html",
-                           usuario=session["user"],
-                           progress=progress)
+                           usuario=user,
+                           progress=progress,
+                           avatarVariant=avatarVariant)
 
 
 # --- trivia ---
@@ -212,23 +194,23 @@ def dashboard():
 @requires_login
 def mostrar_trivia():
     if request.method == 'GET':
-        noPregunta = getCurrentQuestionNo(session['user'])
+        user = get_user()
+        noPregunta = getCurrentQuestionNo(user)
         pregunta = obtener_preguntas(noPregunta)
-        progress = updateLevelAndGetProgress(session["user"])
+        progress = updateLevelAndGetProgress(user)
+        db.session.commit()
         return render_template("Trivia.html",
-                               usuario={**session["user"], "noPregunta": noPregunta},
+                               usuario=user,
                                progress=progress,
                                pregunta=pregunta)
     else:
-        print(request.json)
+        user = get_user()
         correct = request.json['correct']
         if correct:
-            session['user']['puntuacion'] += POINTS_PER_GOOD_ANSWER
+            user.puntuacion += POINTS_PER_GOOD_ANSWER
         else:
-            session['user']['intentosFallidos'] += 1
-
-        session.modified = True
-
+            user.intentosFallidos += 1
+        db.session.commit()
         return jsonify({"msg": "Actualizado correctamente"})
 
 
