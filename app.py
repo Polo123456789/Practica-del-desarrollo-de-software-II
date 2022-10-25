@@ -6,6 +6,8 @@ from flask import Flask, session, render_template, request, jsonify, redirect, u
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date, datetime, timedelta
 
+from functools import wraps
+
 app = Flask(__name__)
 app.secret_key = "Un valor que cambiaremos cuando vayamos a produccion "
 
@@ -68,12 +70,24 @@ def getCurrentQuestionNo(user):
     return 1 + (user['puntuacion'] // POINTS_PER_GOOD_ANSWER)
 
 
+def requires_login(fn):
+    @wraps(fn)
+    def wrapper(*args, **kwargs):
+        if not "user" in session:
+            flash("Tiene que iniciar sesion primero")
+            return redirect(url_for("mostrar_login"))
+        else:
+            return fn(*args, **kwargs)
+
+    return wrapper
+
+
 # --- definicion de rutas ---
 
 # inicio de sesion
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return redirect(url_for("mostrar_login"))
 
 
 @app.route("/login", methods=['GET', 'POST'])
@@ -147,6 +161,7 @@ def register():
 
 
 @app.route("/dashboard")
+@requires_login
 def dashboard():
     now = datetime.now()
 
@@ -188,6 +203,7 @@ def dashboard():
 
 # --- trivia ---
 @app.route("/trivia", methods=['GET', 'POST'])
+@requires_login
 def mostrar_trivia():
     if request.method == 'GET':
         noPregunta = getCurrentQuestionNo(session['user'])
@@ -211,13 +227,15 @@ def mostrar_trivia():
 
 
 # buscar amigos
-@app.route("/buscaramigos")
+@app.route("/buscar-amigos")
+@requires_login
 def mostrar_amigos():
     return render_template("buscaramigos.html")
 
 
 # perfil
 @app.route("/perfil")
+@requires_login
 def mostrar_perfil():
     if "user" in session:
         user_email = session["email"]
@@ -229,12 +247,14 @@ def mostrar_perfil():
 
 # ranking
 @app.route("/ranking")
+@requires_login
 def mostrar_ranking():
     return render_template("ranking.html")
 
 
 # configuracion de administrador
 @app.route("/config")
+@requires_login
 def mostrar_config():
     return render_template("config.html")
 
