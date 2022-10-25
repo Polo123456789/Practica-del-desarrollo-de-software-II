@@ -1,21 +1,6 @@
 {% extends 'Navbar.html' %}
 
-{% block username %}
-  {{ usuario.nombre }}
-{% endblock%}
-
-{% block id %}
-  {{ usuario.idUser }}
-{% endblock %}
-
-{% block progressbar %}
-    <!-- TODO: Agregar calculo -->
-    <div class="progress-bar" style="width: 70%;"></div>
-{% endblock %}
-
-{% block nivel %}
-  {{ usuario.nivel }}
-{% endblock %}
+<title>{% block titulo %}{% endblock %}</title>
 
 {% block contenido %}
 <section class="form-register">
