@@ -100,8 +100,6 @@ def mostrar_login():
 def register():
     if request.method == 'POST':
 
-        #en produccion se enviara al dashboard si existe un usuasio en sesion
-
         form = request.form
         nombres = form["nombres"]
         apellidos = form["apellidos"]
@@ -112,7 +110,7 @@ def register():
 
         buscar_usuario = False #db.session.execute(db.select(User).filter_by(email=email)).one()
         if buscar_usuario:
-            return render_template('registro.html', form=form)
+            return render_template('Registro.html', form=form)
         else:
             participacion = date.today()
             user = User(
@@ -136,8 +134,8 @@ def register():
             session["nombres"] = nombres
             session["email"] = email
             return redirect(url_for('dashboard', usuario=user))
-    print("registration fail")
-    return render_template('registro.html')
+
+    return render_template('Registro.html')
 
 
 @app.route("/dashboard")
