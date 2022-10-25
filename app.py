@@ -99,41 +99,37 @@ def mostrar_login():
 @app.route("/registro", methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-
         form = request.form
+
         nombres = form["nombres"]
         apellidos = form["apellidos"]
         nac = date.fromisoformat(form["nac"])
         email = form["correo"]
         contraseña = form["contraseña"]
         avatar = int(form["avatar"])
+        participacionInicial = date.today()
 
-        buscar_usuario = False #db.session.execute(db.select(User).filter_by(email=email)).one()
-        if buscar_usuario:
-            return render_template('Registro.html', form=form)
-        else:
-            participacion = date.today()
-            user = User(
-                nombres=nombres,
-                apellidos=apellidos,
-                fechaNacimiento=nac,
-                email=email,
-                contraseña=contraseña,
-                activarCorreos=False,
-                puntuacion=0,
-                nivel=0,
-                intentosFallidos=0,
-                avatar=avatar,
-                racha=0,
-                ultimaParticipacion=participacion,
-                administrador = False
-            )
-            #print(User)
-            db.session.add(user)
-            db.session.commit()
-            session["nombres"] = nombres
-            session["email"] = email
-            return redirect(url_for('dashboard', usuario=user))
+        user = User(
+            nombres=nombres,
+            apellidos=apellidos,
+            fechaNacimiento=nac,
+            email=email,
+            contraseña=contraseña,
+            activarCorreos=True,
+            puntuacion=0,
+            nivel=1,
+            intentosFallidos=0,
+            avatar=avatar,
+            racha=1,
+            ultimaParticipacion=participacionInicial,
+            administrador = False
+        )
+        db.session.add(user)
+        db.session.commit()
+
+        session["user"] = email;
+
+        return redirect(url_for('dashboard'))
 
     return render_template('Registro.html')
 
@@ -235,7 +231,7 @@ def mostrar_config():
 @app.route("/clear-session")
 def limpiar_session():
     session.clear()
-    return "Listo"
+    return redirect(url_for("mostrar_login"))
 
 
 # --- API de preguntas ---
@@ -256,18 +252,18 @@ if __name__ == "__main__":
                 apellidos = "Reyes Mox", 
                 fechaNacimiento = date.today(),
                 email = "administrador@gmail.com", 
-                contraseña = "Abc123!", 
+                contraseña = "abc123!", 
                 activarCorreos = 1, 
                 puntuacion = 0, 
-                nivel = 0, 
+                nivel = 1, 
                 intentosFallidos = 0, 
-                avatar = 0, 
+                avatar = 1, 
                 racha = 0, 
                 ultimaParticipacion = date.today(), 
                 administrador = 1
             )
 
-        db.session.add(User1)
-        db.session.commit()
+            db.session.add(User1)
+            db.session.commit()
     else:
         app.run(debug=True)

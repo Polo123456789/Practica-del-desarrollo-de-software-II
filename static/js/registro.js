@@ -24,3 +24,5 @@ const selectAvatar = (selector) => {
 avatars.forEach((a) => a.addEventListener("click", () => {
     selectAvatar(`#${a.id}`)
 }))
+
+selectAvatar("#avatar1");
