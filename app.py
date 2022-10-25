@@ -108,6 +108,7 @@ def register():
         nac = date.fromisoformat(form["nac"])
         email = form["correo"]
         contraseña = form["contraseña"]
+        avatar = int(form["contraseña"])
 
         buscar_usuario = False #db.session.execute(db.select(User).filter_by(email=email)).one()
         if buscar_usuario:
@@ -124,7 +125,7 @@ def register():
                 puntuacion=0,
                 nivel=0,
                 intentosFallidos=0,
-                avatar="avatar",
+                avatar=avatar,
                 racha=0,
                 ultimaParticipacion=participacion,
                 administrador = False
