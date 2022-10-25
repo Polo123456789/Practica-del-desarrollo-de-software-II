@@ -13,6 +13,7 @@ app.secret_key = "Un valor que cambiaremos cuando vayamos a produccion "
 
 db = SQLAlchemy()
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
+app.config['PERMANENT_SESSION_LIFETIME'] =  timedelta(hours=8)
 db.init_app(app)
 
 
@@ -101,6 +102,7 @@ def mostrar_login():
 
         if usuario:
             session["user"] = usuario.email
+            session.permanent = True
 
             ultima = usuario.ultimaParticipacion
             hoy = date.today()
