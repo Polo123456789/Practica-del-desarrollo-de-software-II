@@ -160,10 +160,7 @@ def register():
         db.session.add(user)
         db.session.commit()
 
-        session["user"] = email;
-        session.permanent = True
-
-        return redirect(url_for('dashboard'))
+        return redirect(url_for('mostrar_login'))
 
     return render_template('Registro.html')
 

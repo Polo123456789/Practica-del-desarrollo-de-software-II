@@ -34,3 +34,10 @@
   </section>
 </form>
 {% endblock %}
+
+{% block scripts %}
+<script src="/static/js/validaciones.js"></script>
+<script>
+  applyTextValidator("#contraseña", validatePassword)
+</script>
+{% endblock %}
