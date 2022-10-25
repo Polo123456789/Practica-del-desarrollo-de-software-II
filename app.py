@@ -108,7 +108,7 @@ def register():
         nac = date.fromisoformat(form["nac"])
         email = form["correo"]
         contraseña = form["contraseña"]
-        avatar = int(form["contraseña"])
+        avatar = int(form["avatar"])
 
         buscar_usuario = False #db.session.execute(db.select(User).filter_by(email=email)).one()
         if buscar_usuario:
