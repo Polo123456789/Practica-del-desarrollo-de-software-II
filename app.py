@@ -1,11 +1,10 @@
 import json
-from string import punctuation
 import urllib.request
 import sys
 
-from flask import Flask, session, render_template, request, jsonify, redirect, url_for
+from flask import Flask, session, render_template, request, jsonify, redirect, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 app = Flask(__name__)
 app.secret_key = "Un valor que cambiaremos cuando vayamos a produccion "
@@ -53,6 +52,7 @@ class Cache(db.Model):
     opCorrecta = db.Column(db.String(), nullable=False, unique=False)
 
 
+DATE_STRING_FORMAT = "%Y-%m-%d"
 DATETIME_STRING_FORMAT = "%d/%m/%Y %H:%M:%S"
 POINTS_PER_LEVEL = 25
 POINTS_PER_GOOD_ANSWER = 5
@@ -79,18 +79,30 @@ def index():
 @app.route("/login", methods=['GET', 'POST'])
 def mostrar_login():
     if request.method == 'POST':
-        if "user" in session:
+        form = request.form
+        email = form["correo"]
+        contraseña = form["contraseña"]
+        
+        usuario = User.query.filter_by(email=email, contraseña=contraseña).first()
+
+        if usuario:
+            session["user"] = usuario.email
+
+            ultima = usuario.ultimaParticipacion
+            hoy = date.today()
+            ayer = hoy - timedelta(1)
+            if ayer == ultima:
+                usuario.racha += 1
+            else:
+                usuario.racha = 1
+            usuario.ultimaParticipacion = hoy
+
+            db.session.commit()
+
             return redirect(url_for('dashboard'))
         else:
-            form = request.form
-            nombres = form["nombres"]
-            contraseña = form["contraseña"]
-            session["nombres"] = nombres
-            buscar_usuario = db.session.execute(db.select(User).filter_by(nombres=nombres, contraseña=contraseña)).one()
-            if buscar_usuario:
-                return redirect(url_for('dashboard', usuario=buscar_usuario))
-            else:
-                return render_template("login.html", form=form)
+            flash("Correo o contraseña incorrectos");
+            return render_template("login.html")
     else:
         return render_template("login.html")
 
