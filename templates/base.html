@@ -96,7 +96,7 @@
 
       <div class="d-flex flex-column">
         <b class="fs-5">{% block username %}{% endblock %}</b>
-        <span class="text-muted">{% block id %}{% endblock %}</span>
+        <span class="text-muted">#{% block id %}{% endblock %}</span>
       </div>
 
       <div class="flex-grow-1 invisible">
@@ -108,7 +108,7 @@
           <!-- div class="progress-bar" style="width: 70%;"></div -->
           {% block progressbar %} {% endblock %}
         </div>
-        <span><b>Nivel:</b>{% block nivel %}{% endblock %}</span>
+        {% block nivel %}{% endblock %}
       </div>
     </div>
   </nav>
@@ -122,6 +122,8 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
     crossorigin="anonymous"></script>
+    {% block scripts %}
+    {% endblock %}
 </body>
 
 </html>
