@@ -34,6 +34,9 @@ class User(db.Model):
     ultimaParticipacion = db.Column(db.Date(), nullable=False, unique=False)
     administrador = db.Column(db.Boolean(), nullable=False, unique=False)
 
+    invitacionesRecibidas = db.relationship("Friendship", foreign_keys='Friendship.idReceptor', back_populates="receptor")
+    invitacionesEnviadas = db.relationship("Friendship", foreign_keys='Friendship.idRemitente', back_populates="remitente")
+
     
 class Friendship(db.Model):
     # __tablename__ = 'friendship'
@@ -41,8 +44,8 @@ class Friendship(db.Model):
     idReceptor = db.Column(db.Integer(), db.ForeignKey('user.idUser'), primary_key=True)
     estadoSolicitud = db.Column(db.Boolean())
     creacion = db.Column(db.DateTime())
-    remitente = db.relationship("User", foreign_keys=[idRemitente], backref="invitacionesRecibidas")
-    receptor = db.relationship("User", foreign_keys=[idReceptor], backref="invitacionesEnviadas")
+    remitente = db.relationship("User", foreign_keys=[idRemitente], back_populates="invitacionesEnviadas")
+    receptor = db.relationship("User", foreign_keys=[idReceptor], back_populates="invitacionesRecibidas")
 
 
 class Cache(db.Model):
