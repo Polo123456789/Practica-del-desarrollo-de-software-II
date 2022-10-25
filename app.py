@@ -22,7 +22,7 @@ class User(db.Model):
     apellidos = db.Column(db.String(30), nullable=False, unique=False)
     fechaNacimiento = db.Column(db.Date(), nullable=False, unique=False)
     email = db.Column(db.String(50), nullable=False, unique=True)
-    contraseña = db.Column(db.String(60), nullable=False, unique=False)
+    contraseña = db.Column(db.String(60), nullable=False, unique=False) 
     activarCorreos = db.Column(db.Boolean(), nullable=False, unique=False)
     puntuacion = db.Column(db.Integer(), nullable=False, unique=False)
     nivel = db.Column(db.Integer(), nullable=False, unique=False)
@@ -32,7 +32,7 @@ class User(db.Model):
     ultimaParticipacion = db.Column(db.Date(), nullable=False, unique=False)
     administrador = db.Column(db.Boolean(), nullable=False, unique=False)
 
-
+    
 class Friendship(db.Model):
     # __tablename__ = 'friendship'
     idRemitente = db.Column(db.Integer(), db.ForeignKey('user.idUser'), primary_key=True)
@@ -44,9 +44,9 @@ class Friendship(db.Model):
 
 
 class Cache(db.Model):
-    # __tablename__ = 'cache'
+    #__tablename__ = 'cache'
     idPregunta = db.Column(db.Integer(), primary_key=True)
-    pregunta = db.Column(db.String(), nullable=False, unique=False)
+    pregunta = db.Column(db.String(), nullable=False, unique=False)    
     opcion1 = db.Column(db.String(), nullable=False, unique=False)
     opcion2 = db.Column(db.String(), nullable=False, unique=False)
     opcion2 = db.Column(db.String(), nullable=False, unique=False)
@@ -253,25 +253,23 @@ if __name__ == "__main__":
     if len(sys.argv) == 2 and sys.argv[1] == "--create-db":
         with app.app_context():
             db.create_all()
-
-            User1 = User(
-                nombres="Elian André",
-                apellidos="Reyes Mox",
-                fechaNacimiento=date.today(),
-                email="administrador@gmail.com",
-                contraseña="Abc123!",
-                activarCorreos=1,
-                puntuacion=0,
-                nivel=0,
-                intentosFallidos=0,
-                avatar=0,
-                racha=0,
-                ultimaParticipacion=date.today(),
-                administrador=1
+            User1= User(
+                nombres ="Elian André", 
+                apellidos = "Reyes Mox", 
+                fechaNacimiento = date.today(),
+                email = "administrador@gmail.com", 
+                contraseña = "Abc123!", 
+                activarCorreos = 1, 
+                puntuacion = 0, 
+                nivel = 0, 
+                intentosFallidos = 0, 
+                avatar = 0, 
+                racha = 0, 
+                ultimaParticipacion = date.today(), 
+                administrador = 1
             )
 
         db.session.add(User1)
         db.session.commit()
-
     else:
         app.run(debug=True)
