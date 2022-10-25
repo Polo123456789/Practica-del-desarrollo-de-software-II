@@ -2,7 +2,7 @@ import json
 import urllib.request
 import sys
 
-from flask import Flask, session, render_template, request, jsonify, redirect, url_for, flash
+from flask import Flask, session, render_template, request, jsonify, redirect, url_for, flash, g
 from flask_sqlalchemy import SQLAlchemy
 from datetime import date, datetime, timedelta
 
@@ -81,6 +81,10 @@ def requires_login(fn):
             return fn(*args, **kwargs)
 
     return wrapper
+
+
+def get_user():
+    return User.query.filter_by(email=session["user"]).first()
 
 
 # --- definicion de rutas ---
@@ -236,15 +240,34 @@ def mostrar_amigos():
 
 
 # perfil
-@app.route("/perfil")
+@app.route("/perfil", methods=["GET", "POST"])
 @requires_login
 def mostrar_perfil():
-    if "user" in session:
-        user_email = session["email"]
-        user = db.session.execute(db.select(User).filter_by(email=user_email)).one()
-        return render_template("perfil.html", ususario=user)
+    if request.method == "GET":
+        user = get_user()
+        return render_template("perfil.html", usuario=user)
     else:
-        return redirect(url_for('login'))
+        form = request.form
+        user: User = get_user()
+
+        user.nombres = form["nombres"]
+        user.apellidos = form["apellidos"]
+        user.fechaNacimiento = date.fromisoformat(form["nac"])
+        user.email = form["correo"]
+
+        if form["contraseña"] != "":
+            user.contraseña = form["contraseña"]
+
+        if "activarCorreos" in form:
+            user.activarCorreos = True
+        else:
+            user.activarCorreos = False
+
+        user.avatar = form["avatar"]
+
+        db.session.commit()
+
+        return redirect(url_for("dashboard"))
 
 
 # ranking

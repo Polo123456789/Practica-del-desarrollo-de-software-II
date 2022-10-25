@@ -52,13 +52,6 @@
     text-decoration: none;
   }
 
-  .content a:hover {
-    display: flex;
-    flex-wrap: wrap;
-    color: white;
-    text-decoration: underline;
-  }
-
   #avatar-options{
     margin: auto;
     display: flex;
@@ -138,19 +131,6 @@
     line-height: 40px;
   }
   
-  .form-register-update a {
-    display: flex;
-    flex-wrap: wrap;
-    color: white;
-    text-decoration: none;
-  }
-  
-  .form-register-update a:hover {
-    display: flex;
-    flex-wrap: wrap;
-    color: white;
-    text-decoration: underline;
-  }
   
   .form-register-update .botons {
     width: 40%;
