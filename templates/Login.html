@@ -1,9 +1,14 @@
 {% extends 'Navbar.html' %}
 
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/css/style.css">
+{% endblock%}
+
 <title>{% block titulo %}{% endblock %}</title>
 
 {% block contenido %}
-<section class="form-register">
+<form action="/url" method="post">
+<section class="form-register" >
     <div class="d-flex flex-column gap-1 align-items-center">
       <img src="img/8ef3827d3f838f42f8c223101788a05c.gif" style="width:90px; height: 90px;">
     </div>
@@ -21,4 +26,5 @@
       <input class="botons" type="submit" value="Ingresar" style="color: black; font-family:'Combo', cursive; font-weight:600; font-size: x-large;"/>
     </div>
   </section>
+</form>
 {% endblock %}

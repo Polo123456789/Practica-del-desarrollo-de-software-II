@@ -1,25 +1,16 @@
-{% extends 'base.html' %}
+{% extends 'Navbar.html' %}
 
-{% block username %}
-  {{ usuario.nombre }}
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/css/perfil.css">
+<link rel="stylesheet" href="/static/css/style.css">
 {% endblock%}
 
-{% block id %}
-  {{ usuario.idUser }}
-{% endblock %}
+<title>{% block titulo %}{% endblock %}</title>
 
-{% block progressbar %}
-    <!-- TODO: Agregar calculo -->
-    <div class="progress-bar" style="width: 70%;"></div>
-{% endblock %}
-
-{% block nivel %}
-  {{ usuario.nivel }}
-{% endblock %}
 
 {% block contenido %}
 
-
+<form action="/url" method="post">
     <section class="form-register">
       <h4 style="font-family:'Combo', cursive; font-weight:600; font-size:xx-large">Registro</h4>
         <form action="/registro" method="post">
@@ -46,5 +37,5 @@
       <input class="botons" type="submit" value="Registrar" style="font-family:'Combo', cursive; font-weight:600; font-size: x-large;"/>
       </form>
     </section>
-
+</form>
 {% endblock %}
