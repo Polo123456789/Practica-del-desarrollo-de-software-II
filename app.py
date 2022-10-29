@@ -34,6 +34,10 @@ def Perfil():
             "avatar":  "/static/img/avatars/standar.gif"}
     return render_template("Perfil.html", usuario=user)
 
+@app.route('/administrador')
+def Admin():
+    return render_template("Administrador.html")
+
 
 
 
