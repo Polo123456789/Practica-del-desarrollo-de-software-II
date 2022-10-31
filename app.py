@@ -138,6 +138,8 @@ def mostrar_login():
             flash("Correo o contraseña incorrectos");
             return render_template("login.html")
     else:
+        if "user" in session:
+            return redirect(url_for('dashboard'))
         return render_template("login.html")
 
 
