@@ -1,7 +1,11 @@
 {% extends 'base.html' %}
 
+{% block titulo %}
+  Dashboard
+{% endblock %}
+
 {% block username %}
-  {{ usuario.nombre }}
+  {{ usuario.nombres }} {{ usuario.apellidos }}
 {% endblock%}
 
 {% block id %}
@@ -9,12 +13,18 @@
 {% endblock %}
 
 {% block progressbar %}
-    <!-- TODO: Agregar calculo -->
-    <div class="progress-bar" style="width: 70%;"></div>
+    <div class="progress-bar" style="width: {{ progress }}%;" title="{{progress}}%"></div>
 {% endblock %}
 
 {% block nivel %}
-  {{ usuario.nivel }}
+<div class="d-flex gap-2">
+  <span>
+   <b>Nivel:</b>&nbsp;{{ usuario.nivel }}
+  </span>
+  <span>
+   <b>Intentos:</b>&nbsp;{{ usuario.intentosFallidos}}
+  </span>
+</div>
 {% endblock %}
 
 {% block contenido %}
@@ -22,9 +32,9 @@
 <main class="container mt-5 h-100">
     <div class="d-flex flex-wrap gap-3 justify-content-evenly align-items-center">
       <div class="dashboard-central-element">
-        <img src="avatar.jpeg" alt="Avatar" class="position-absolute top-0 start-0">
+        <img src="/static/img/avatars/{{usuario.avatar}}/{{avatarVariant}}.gif" alt="Avatar" class="position-absolute top-0 start-0 w-100">
       </div>
-      <div class="dashboard-central-element">
+      <a class="dashboard-central-element text-decoration-none text-black" href="/trivia">
         <div>
           <svg xmlns="http://www.w3.org/2000/svg" class="position-absolute top-0 start-0 dashboard-play-button-bg"
             fill="currentColor" viewBox="0 0 16 16">
@@ -38,8 +48,7 @@
           </svg>
           <p class="text-center fs-2 my-2">Jugar</p>
         </div>
-      </div>
+      </a>
     </div>
   </main>
-
 {% endblock %}

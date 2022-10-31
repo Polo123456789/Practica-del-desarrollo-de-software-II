@@ -3,39 +3,48 @@
 {% block stylesheets %}
 <link rel="stylesheet" href="/static/css/perfil.css">
 <link rel="stylesheet" href="/static/css/style.css">
+<style>
+  .selected {
+    border: 5px gold solid;
+  }
+</style>
 {% endblock%}
 
-<title>{% block titulo %}{% endblock %}</title>
+<title>{% block titulo %}Registro{% endblock %}</title>
 
 
 {% block contenido %}
 
-<form action="/url" method="post">
-    <section class="form-register">
-      <h4 style="font-family:'Combo', cursive; font-weight:600; font-size:xx-large">Registro</h4>
-        <form action="/registro" method="post">
+<form action="/registro" method="post">
+  <section class="form-register">
+    <h4 style="font-family:'Combo', cursive; font-weight:600; font-size:xx-large">Registro</h4>
+    <form action="/registro" method="post">
       <label for="nombres" style="font-family:'Combo', cursive; font-weight:500;">Nombres</label>
-      <input class="controls" type="text" name="nombres" id="nombres" placeholder="Ingrese su Nombre"/>
+      <input class="controls" type="text" name="nombres" id="nombres" placeholder="Ingrese su Nombre" />
       <label for="apellidos" style="font-family:'Combo', cursive; font-weight:500;">Apellidos</label>
-      <input class="controls" type="text" name="apellidos" id="apellidos" placeholder="Ingrese su Apellido"/>
+      <input class="controls" type="text" name="apellidos" id="apellidos" placeholder="Ingrese su Apellido" />
       <label for="nac" style="font-family:'Combo', cursive; font-weight:500;">Fecha de Nacimiento</label>
-      <input class="controls" type="date" name="nac" id="nac"/>
+      <input class="controls" type="date" name="nac" id="nac" />
       <label for="correo" style="font-family:'Combo', cursive; font-weight:500;">Email</label>
-      <input class="controls" type="email" name="correo" id="correo" placeholder="Ingrese su Correo"/>
+      <input class="controls" type="email" name="correo" id="correo" placeholder="Ingrese su Correo" />
       <label for="contraseña" style="font-family:'Combo', cursive; font-weight:500;">Contraseña</label>
-      <input class="controls" type="password" name="contraseña" id="contraseña" placeholder="Ingrese su Contraseña"/>
-      <label for="contraseña" style="font-family:'Combo', cursive; font-weight:500;">Género</label>
-      <a href="#">
-        <br>
-        <img src="img/442008112_GLANCING_AVATAR_3D_400px.gif" style="width:90px; height: 90px; margin-left: 15px;">
-      </a>
-       <a href="#">
-        <img src="img/8ef3827d3f838f42f8c223101788a05c.gif" style="width:90px; height: 90px;">
-       </a>
-       <br>
-       <br>
-      <input class="botons" type="submit" value="Registrar" style="font-family:'Combo', cursive; font-weight:600; font-size: x-large;"/>
-      </form>
-    </section>
+      <input class="controls" type="password" name="contraseña" id="contraseña" placeholder="Ingrese su Contraseña" />
+      <label for="contraseña" style="font-family:'Combo', cursive; font-weight:500;">Avatar</label>
+      <div class="d-flex justify-content-evenly">
+        <img id="avatar1" src="/static/img/avatars/1/normal.gif" style="width:90px; height: 90px;">
+        <img id="avatar3" src="/static/img/avatars/3/normal.gif" style="width:90px; height: 90px;">
+      </div>
+      <input type="number" name="avatar" id="avatar" hidden>
+      <br>
+      <br>
+      <input class="botons" type="submit" value="Registrar"
+        style="font-family:'Combo', cursive; font-weight:600; font-size: x-large; color: black;" />
+    </form>
+  </section>
 </form>
+{% endblock %}
+
+{% block scripts %}
+  <script src="/static/js/validaciones.js"></script>
+  <script src="/static/js/registro.js"></script>
 {% endblock %}
