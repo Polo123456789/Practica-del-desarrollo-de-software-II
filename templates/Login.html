@@ -1,0 +1,43 @@
+{% extends 'Navbar.html' %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/css/style.css">
+{% endblock%}
+
+<title>{% block titulo %}Login{% endblock %}</title>
+
+{% block contenido %}
+
+<form action="/login" method="post">
+  <section class="form-register">
+    <div class="d-flex flex-column gap-1 align-items-center">
+      <img src="/static/img/avatars/4/normal.gif" style="width:90px; height: 90px;">
+    </div>
+    <h4 style="font-family:'Combo', cursive; font-weight:600; font-size:xx-large; text-align: center;">
+      Iniciar sesion
+    </h4>
+
+    <label for="nombres" style="font-family:'Combo', cursive; font-weight:500;">Correo</label>
+    <input class="controls" type="email" name="correo" id="correo" placeholder="Ingrese su correo" />
+
+    <label for="contraseña" style="font-family:'Combo', cursive; font-weight:500;">Contraseña</label>
+    <input class="controls" type="password" name="contraseña" id="contraseña" placeholder="Ingrese su Contraseña" />
+
+    <br>
+    <div class="d-flex gap-3">
+      <input class="botons" type="submit" value="Ingresar"
+        style="color: black; font-family:'Combo', cursive; font-weight:600; font-size: x-large;" />
+      <a href="/registro"
+        style="color: black; font-family:'Combo', cursive; font-weight:600; font-size: x-large; text-decoration: none;"
+        class="botons text-center">Registrarse</a>
+    </div>
+  </section>
+</form>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/validaciones.js"></script>
+<script>
+  applyTextValidator("#contraseña", validatePassword)
+</script>
+{% endblock %}

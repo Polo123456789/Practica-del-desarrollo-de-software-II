@@ -185,6 +185,7 @@ const applyDateValidation = (selector) => {
 
   element.addEventListener("change", () => {
     const selected = new Date(element.value);
+    setValid(element);
 
     if (minimum.getTime() > selected.getTime()) {
         setInvalid(element,

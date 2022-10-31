@@ -122,11 +122,11 @@ def mostrar_login():
             usuario.ultimaParticipacion = hoy
 
             db.session.commit()
-
             if usuario.administrador == 1:
                 return redirect(url_for('rankingAdmin'))
             else:
                 return redirect(url_for('dashboard'))
+
         else:
             flash("Correo o contraseña incorrectos");
             return render_template("login.html")
@@ -254,7 +254,6 @@ def mostrar_perfil():
 
         return redirect(url_for("dashboard"))
 
-
 # ranking Admin
 @app.route("/rankingAdmin")
 @requires_login
@@ -262,7 +261,6 @@ def mostrar_rankingAdmin():
     mayor = User.query.order_by(User.puntuacion.desc(), User.intentosFallidos.asc()).limit(10).all
     menor = User.query.order_by(User.puntuacion.asc(), User.intentosFallidos.desc()).limit(10).all
     return render_template("ranking.html")
-
 
 # ranking
 @app.route("/ranking")
