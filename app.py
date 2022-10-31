@@ -1,5 +1,4 @@
 import json
-import pandas as pd
 import urllib.request
 import sys
 
@@ -8,8 +7,6 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import date, datetime, timedelta
 
 from functools import wraps
-
-from sqlalchemy import create_engine
 
 app = Flask(__name__)
 app.secret_key = "Un valor que cambiaremos cuando vayamos a produccion "
@@ -262,16 +259,8 @@ def mostrar_perfil():
 @app.route("/rankingAdmin")
 @requires_login
 def mostrar_rankingAdmin():
-    cadena_conexion ="sqlite:///instance/db.sqlite"
-    conexion = create_engine(cadena_conexion)
-
-    sql = 'SELECT idUser, nombres, puntuacion, intentosFallidos, avatar FROM user'
-
-    df = pd.read_sql_query(sql, con=conexion)
-    mayor = (df.sort_values(by = ['puntuacion', 'intentosFallidos'], ascending=[False, True]))
-    menor = (df.sort_values(by = ['puntuacion', 'intentosFallidos'], ascending=[True, False]))
-    mayor[:10] 
-    menor[:10]  
+    mayor = User.query.order_by(User.puntuacion.desc(), User.intentosFallidos.asc()).limit(10).all
+    menor = User.query.order_by(User.puntuacion.asc(), User.intentosFallidos.desc()).limit(10).all
     return render_template("ranking.html")
 
 
