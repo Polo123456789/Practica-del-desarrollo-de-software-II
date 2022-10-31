@@ -1,4 +1,6 @@
 import json
+import sched
+import time
 import urllib.request
 import sys
 
@@ -15,6 +17,9 @@ db = SQLAlchemy()
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
 app.config['PERMANENT_SESSION_LIFETIME'] =  timedelta(hours=8)
 db.init_app(app)
+
+scheduler = sched.scheduler(time.time,
+                            time.sleep)
 
 
 class User(db.Model):
@@ -64,6 +69,8 @@ POINTS_PER_LEVEL = 25
 POINTS_PER_GOOD_ANSWER = 5
 DAYS_TO_GET_SAD = 7
 
+cache_ = {}
+cache_web_server_url = ["http://ec2-44-203-35-246.compute-1.amazonaws.com/preguntas.php?nivel={}&grupo={}"]
 
 def updateLevelAndGetProgress(user):
     user.nivel = (user.puntuacion // POINTS_PER_LEVEL) + 1
@@ -199,7 +206,11 @@ def mostrar_trivia():
     if request.method == 'GET':
         user = get_user()
         noPregunta = getCurrentQuestionNo(user)
-        pregunta = obtener_preguntas(noPregunta)
+        if noPregunta not in cache_.keys():
+            pregunta_cache = obtener_preguntas(noPregunta)
+            cache_[noPregunta] = pregunta_cache
+        else:
+            pregunta = cache_[noPregunta]
         progress = updateLevelAndGetProgress(user)
         db.session.commit()
         return render_template("Trivia.html",
@@ -273,7 +284,35 @@ def mostrar_ranking():
 @app.route("/config")
 @requires_login
 def mostrar_config():
-    return render_template("config.html")
+    if request.method == "GET":
+        return render_template("config.html")
+    else:
+        return render_template("config.html")
+
+
+@app.route("/config/cache", methods=["POST"])
+@requires_login
+def actualizar_cache():
+    duracionDeCache = int(request.form["duracionDeCache"]) * 60
+    #scheduler.enter(duracionDeCache, 1, clear_cache)
+    #scheduler.run()
+    print("tiempo de borrado de cache cambiado a: "+ str(duracionDeCache))
+    return redirect(url_for("mostrar_config"))
+
+
+@app.route("/config/web_server", methods=["POST"])
+@requires_login
+def actualizar_web_server():
+    web_server_url_request = request.form["web_server_url"]
+
+    if web_server_url_request not in cache_web_server_url:
+        cache_web_server_url.append(web_server_url_request)
+        flash("URL guardada con exito")
+    else:
+        flash("URL ya existe en cache")
+
+    return redirect(url_for("mostrar_config"))
+
 
 
 # Unicamente como una utilidad ahora en el desarrollo
@@ -285,12 +324,20 @@ def limpiar_session():
 
 # --- API de preguntas ---
 def obtener_preguntas(nivel):
-    url = "http://ec2-44-203-35-246.compute-1.amazonaws.com/preguntas.php?nivel={}&grupo={}".format(nivel, 2)
+    url = cache_web_server_url[-1].format(nivel, 2)
     response = urllib.request.urlopen(url)
     data = response.read()
     dict = json.loads(data)
     return dict
 
+# --- herramientas de cache ---
+
+def clear_cache():
+    cache_.clear()
+
+#scheduler.enter(1800, 1,clear_cache)
+
+#scheduler.run()
 
 if __name__ == "__main__":
     if len(sys.argv) == 2 and sys.argv[1] == "--create-db":
