@@ -267,9 +267,21 @@ def mostrar_perfil():
 @app.route("/rankingAdmin")
 @requires_login
 def mostrar_rankingAdmin():
-    mayor = User.query.order_by(User.puntuacion.desc(), User.intentosFallidos.asc()).limit(10).all
-    menor = User.query.order_by(User.puntuacion.asc(), User.intentosFallidos.desc()).limit(10).all
-    return render_template("ranking.html")
+    usuario = get_user()
+    mejores = User.query.filter_by(administrador=False)\
+                        .order_by(User.puntuacion.desc(),
+                                  User.intentosFallidos.asc())\
+                        .limit(10)\
+                        .all()
+    peores = User.query.filter_by(administrador=False)\
+                       .order_by(User.puntuacion.asc(),
+                                 User.intentosFallidos.desc())\
+                       .limit(10)\
+                       .all()
+    return render_template("ranking.html",
+                           usuario=usuario,
+                           mejores=mejores,
+                           peores=peores)
 
 # configuracion de administrador
 @app.route("/config")

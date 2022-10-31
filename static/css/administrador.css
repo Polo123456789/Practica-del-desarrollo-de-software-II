@@ -40,3 +40,16 @@
   .form-range-thumb-bg {
     background-color: #87BCDE;
   }
+
+.ranking-list {
+    list-style-position: inside;
+}
+
+.ranking-list > li {
+    display: block;
+}
+
+.ranking-list > li > div::before {
+    display: list-item;
+    content: "";
+}

@@ -1,0 +1,55 @@
+{% extends 'admin.html' %}
+{% block titulo %}Rankings{% endblock %}
+
+{% block stylesheets %}
+<link rel="stylesheet" href="static/css/administrador.css">
+{% endblock %}
+
+{% block username %}
+{{ usuario.nombres }} {{usuario.apellidos}}
+{% endblock %}
+
+{% block id %}
+#{{ usuario.idUser }}
+{% endblock %}
+
+{% block contenido %}
+<h1>Top 10 Mejores</h1>
+    <ol class="ranking-list">
+        {% for u in mejores%}
+      <li class="text-white rounded px-3 py-2 shadow my-2" style="background-color: var(--tg-secondary);">
+        <div class="d-flex flex-wrap gap-2 align-items-center text-white">
+          <img src="/static/img/avatars/{{u.avatar}}/normal.gif" alt="" width="32" height="32">
+          <span>
+            {{u.nombres}} {{u.apellidos}}
+          </span>
+          <div class="vr"></div>
+          <div class="flex-grow-1 ranking-list-points">
+            Puntos: {{u.puntuacion}}  Intentos: {{u.intentosFallidos}}
+          </div>
+          <span class="text-muted">#{{u.idUser}}</span>
+        </div>
+      </li>
+        {% endfor %}
+    </ol>
+
+<h1>Top 10 Peores</h1>
+    <ol class="ranking-list">
+        {% for u in peores %}
+      <li class="text-white rounded px-3 py-2 shadow my-2" style="background-color: var(--tg-secondary);">
+        <div class="d-flex flex-wrap gap-2 align-items-center text-white">
+          <img src="/static/img/avatars/{{u.avatar}}/normal.gif" alt="" width="32" height="32">
+          <span>
+            {{u.nombres}} {{u.apellidos}}
+          </span>
+          <div class="vr"></div>
+          <div class="flex-grow-1 ranking-list-points">
+            Puntos: {{u.puntuacion}}  Intentos: {{u.intentosFallidos}}
+          </div>
+          <span class="text-muted">#{{u.idUser}}</span>
+        </div>
+      </li>
+        {% endfor %}
+    </ol>
+
+{% endblock %}
