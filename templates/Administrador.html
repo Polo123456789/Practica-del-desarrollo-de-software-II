@@ -1,29 +1,39 @@
 {% extends 'admin.html' %}
 {% block titulo %}Administrador{% endblock %}
-{% block stylesheets %} <link rel="stylesheet" href="static/css/administrador.css"> {% endblock %}
+{% block stylesheets %}
+<link rel="stylesheet" href="static/css/administrador.css"> {% endblock %}
 
 {% block username %}
-{{ usuario.nombre }}
+{{ usuario.nombres }} {{usuario.apellidos}}
 {% endblock %}
 
 {% block id %}
-{{ usuario.idUser }}
+#{{ usuario.idUser }}
 {% endblock %}
 
-{% block  contenido %}
-<div>
-    <form action="/config/cache" method="post">
-    <label for="customRange1" class="form-label">Duración de Caché: {{duracionDeCache}}min</label>
-    <input type="range" class="form-range" id="duracionDeCache" name="duracionDeCache" min="1" max="60" value= {{duracionDeCache}} >
-</form>
-  </div>
-  
-  <label for="web_server_url" class="form-label">URL Web server - Preguntas</label>
-    <div class="d-flex gap-3 align-items-center">
-        <form action="/config/web_server" method="post">
-    <input type="text" class="form-control" id="web_server_url" name="web_server_url" aria-describedby="basic-addon3">
-    <button type="button" class="btn btn-primary">Guardar</button>
-</form>
-  </div>
+{% block contenido %}
+  <form action="/config/cache" method="post" class="my-3">
+    <label class="form-label">Duración de Caché:</label>
+    <input type="number" class="form-control mb-1" id="duracionDeCache" name="duracionDeCache" min="1" max="60" step="1"
+      value={{ duracionCache }}>
+    <input type="submit" value="Guardar" class="btn btn-primary">
+  </form>
 
-  {% endblock %}
+  <form action="/config/web_server" method="post">
+    <label class="form-label">URL Web server - Preguntas</label>
+    <input type="text" class="form-control mb-1" id="web_server_url" name="web_server_url" value="{{webServiceUrl}}">
+    <p class="text-muted" style="font-size: 0.8em;">
+      Nota: Entre <code>{}</code> va a encontrar las variables a sustituir.
+
+      <ul class="text-muted" style="font-size: 0.8em;">
+        <li>
+          <code>nivel</code>: El numero de pregunta
+        </li>
+        <li>
+          <code>grupo</code>: El numero de grupo
+        </li>
+      </ul>
+    </p>
+    <input type="submit" value="Guardar" class="btn btn-primary">
+  </form>
+{% endblock %}

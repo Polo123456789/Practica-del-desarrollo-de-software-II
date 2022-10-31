@@ -1,6 +1,4 @@
 import json
-import sched
-import time
 import urllib.request
 import sys
 
@@ -17,9 +15,6 @@ db = SQLAlchemy()
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///db.sqlite"
 app.config['PERMANENT_SESSION_LIFETIME'] =  timedelta(hours=8)
 db.init_app(app)
-
-scheduler = sched.scheduler(time.time,
-                            time.sleep)
 
 
 class User(db.Model):
@@ -69,8 +64,8 @@ POINTS_PER_LEVEL = 25
 POINTS_PER_GOOD_ANSWER = 5
 DAYS_TO_GET_SAD = 7
 
-cache_ = {}
-cache_web_server_url = ["http://ec2-44-203-35-246.compute-1.amazonaws.com/preguntas.php?nivel={}&grupo={}"]
+duracionCache = timedelta(0, 5 * 60);
+webServiceUrl = "http://ec2-44-203-35-246.compute-1.amazonaws.com/preguntas.php?nivel={nivel}&grupo={grupo}"
 
 def updateLevelAndGetProgress(user):
     user.nivel = (user.puntuacion // POINTS_PER_LEVEL) + 1
@@ -129,10 +124,7 @@ def mostrar_login():
             usuario.ultimaParticipacion = hoy
 
             db.session.commit()
-            if usuario.administrador == 1:
-                return redirect(url_for('rankingAdmin'))
-            else:
-                return redirect(url_for('dashboard'))
+            return redirect(url_for('dashboard'))
 
         else:
             flash("Correo o contraseña incorrectos");
@@ -184,6 +176,10 @@ def register():
 @requires_login
 def dashboard():
     user = get_user()
+
+    if user.administrador:
+        return redirect(url_for('mostrar_rankingAdmin'))
+
     today = date.today()
     avatarVariant = "normal"
 
@@ -275,44 +271,32 @@ def mostrar_rankingAdmin():
     menor = User.query.order_by(User.puntuacion.asc(), User.intentosFallidos.desc()).limit(10).all
     return render_template("ranking.html")
 
-# ranking
-@app.route("/ranking")
-@requires_login
-def mostrar_ranking():
-    return render_template("ranking.html")
-
-
 # configuracion de administrador
 @app.route("/config")
 @requires_login
 def mostrar_config():
-    if request.method == "GET":
-        return render_template("config.html")
-    else:
-        return render_template("config.html")
+    usuario = get_user()
+    return render_template("Administrador.html",
+                           usuario=usuario,
+                           duracionCache=int(duracionCache.total_seconds() / 60),
+                           webServiceUrl=webServiceUrl)
 
 
 @app.route("/config/cache", methods=["POST"])
 @requires_login
 def actualizar_cache():
-    duracionDeCache = int(request.form["duracionDeCache"]) * 60
-    #scheduler.enter(duracionDeCache, 1, clear_cache)
-    #scheduler.run()
-    print("tiempo de borrado de cache cambiado a: "+ str(duracionDeCache))
+    global duracionCache
+    minutos = int(request.form["duracionDeCache"])
+    duracionCache = timedelta(0, minutos * 60)
+    print(f"{minutos=}, {duracionCache=}")
     return redirect(url_for("mostrar_config"))
 
 
 @app.route("/config/web_server", methods=["POST"])
 @requires_login
 def actualizar_web_server():
-    web_server_url_request = request.form["web_server_url"]
-
-    if web_server_url_request not in cache_web_server_url:
-        cache_web_server_url.append(web_server_url_request)
-        flash("URL guardada con exito")
-    else:
-        flash("URL ya existe en cache")
-
+    global webServiceUrl
+    webServiceUrl = request.form["web_server_url"]
     return redirect(url_for("mostrar_config"))
 
 
@@ -326,20 +310,11 @@ def limpiar_session():
 
 # --- API de preguntas ---
 def obtener_preguntas(nivel):
-    url = cache_web_server_url[-1].format(nivel, 2)
+    url = webServiceUrl.format(nivel=nivel, grupo=2)
     response = urllib.request.urlopen(url)
     data = response.read()
     dict = json.loads(data)
     return dict
-
-# --- herramientas de cache ---
-
-def clear_cache():
-    cache_.clear()
-
-#scheduler.enter(1800, 1,clear_cache)
-
-#scheduler.run()
 
 if __name__ == "__main__":
     if len(sys.argv) == 2 and sys.argv[1] == "--create-db":
