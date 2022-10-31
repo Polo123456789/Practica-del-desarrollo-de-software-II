@@ -1,0 +1,63 @@
+<!DOCTYPE HTML>
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}{% endblock %}</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Combo">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+    {% block stylesheets %} {% endblock %}
+</head>
+
+<body>
+  <div class="offcanvas offcanvas-start" id="offcanvasMenu">
+    <div class="offcanvas-header">
+      <h1>Menu</h1>
+      <button title="Cerrar menu" aria-label="Cerrar menu" class="btn-close" data-bs-toggle="offcanvas"
+        data-bs-target="#offcanvasMenu"></button>
+    </div>
+    <div class="offcanvas-body">
+      Hola
+    </div>
+  </div>
+
+  <div class="navbar gap-1 tg-navbar justify-content-start">
+    <button aria-label="Abrir menu" title="Abrir menu" class="btn ps-3" data-bs-toggle="offcanvas"
+      data-bs-target="#offcanvasMenu">
+      <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="black" viewBox="0 0 16 16">
+        <path fill-rule="evenodd"
+          d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z" />
+      </svg>
+    </button>
+
+    <div class="d-flex flex-column">
+      <b class="fs-5">{% block username %}{% endblock %}</b>
+      <span class="text-muted">{% block id %}{% endblock %}</span>
+    </div>
+
+    <div class="flex-grow-1 invisible">
+      <!-- Este es solo para que el nivel este alineado a la derecha en pantallas grandes -->
+    </div>
+
+    <div class="flex-grow-1 flex-sm-grow-0 d-flex flex-column align-items-center gap-1 pe-3">
+      <div class="progress level-progress-bar">
+    
+      </div>
+      
+    </div>
+  </div>
+
+  <main class="d-flex flex-column gap-1 align-items-center">
+    {% block  contenido %}
+    {% endblock %}
+  </main>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

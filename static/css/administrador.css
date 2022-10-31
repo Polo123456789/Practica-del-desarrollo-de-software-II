@@ -1,0 +1,42 @@
+:root {
+    --tg-primary: #FFF9CA;
+    --tg-primary-shaded: #fff28f;
+
+    --tg-secondary: #87BCDE;
+    --tg-secondary-shaded: #5fafe1;
+
+    --tg-contrast-1: #5fafe1;
+    --tg-contrast-1-shaded: #5fafe1;
+
+    --tg-contrast-2: #020202;
+    --tg-contrast-2-shaded: #000000;
+  }
+
+  .level-progress-bar {
+    width: clamp(200px, 50vw, 800px);
+  }
+
+  .level-progress-bar>.progress-bar {
+    background-color: var(--tg-contrast-1);
+  }
+
+  .tg-navbar {
+    background-color: var(--tg-primary);
+  }
+
+  body {
+    font-family: Combo;
+  }
+
+  .btn-primary, .btn-primary:hover {
+    background-color: #87BCDE;
+    border-color: #5fafe1;
+  }
+
+  .form-range-thumb-bg {
+    background-color: #87BCDE;
+  }
+
+  .form-range-thumb-bg {
+    background-color: #87BCDE;
+  }
