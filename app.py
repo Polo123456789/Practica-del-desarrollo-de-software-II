@@ -66,6 +66,7 @@ DAYS_TO_GET_SAD = 7
 
 duracionCache = timedelta(0, 5 * 60);
 webServiceUrl = "http://ec2-44-203-35-246.compute-1.amazonaws.com/preguntas.php?nivel={nivel}&grupo={grupo}"
+cache = {}
 
 def updateLevelAndGetProgress(user):
     user.nivel = (user.puntuacion // POINTS_PER_LEVEL) + 1
@@ -201,14 +202,33 @@ def dashboard():
 @app.route("/trivia", methods=['GET', 'POST'])
 @requires_login
 def mostrar_trivia():
+    global cache
+    
     if request.method == 'GET':
         user = get_user()
         noPregunta = getCurrentQuestionNo(user)
-        if noPregunta not in cache_.keys():
-            pregunta_cache = obtener_preguntas(noPregunta)
-            cache_[noPregunta] = pregunta_cache
+        pregunta = None
+        
+        if noPregunta in cache:
+            # if cacheValido:
+            #   return del cache
+            # else:
+            #   try:
+            #       Pedir del sitio
+            #       Actualizar cache
+            #       Retornar pregunta
+            #   except:
+            #       Retornar del cache
+            pass
         else:
-            pregunta = cache_[noPregunta]
+            # try:
+            #   Pedir del sitio
+            #   retornar del sitio
+            # except:
+            #   flash('El sitio no responde y no hay cache') TODO: Detallar
+            #   redirect al dashboard
+            pass
+
         progress = updateLevelAndGetProgress(user)
         db.session.commit()
         return render_template("Trivia.html",
