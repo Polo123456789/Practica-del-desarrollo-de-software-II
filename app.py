@@ -198,36 +198,46 @@ def dashboard():
                            avatarVariant=avatarVariant)
 
 
+def cacheIsValid(cache) -> bool:
+    delta = datetime.now() - cache["lastUpdated"]
+    return delta < duracionCache
+
+
+
 # --- trivia ---
 @app.route("/trivia", methods=['GET', 'POST'])
 @requires_login
 def mostrar_trivia():
     global cache
-    
+
     if request.method == 'GET':
         user = get_user()
         noPregunta = getCurrentQuestionNo(user)
         pregunta = None
         
         if noPregunta in cache:
-            # if cacheValido:
-            #   return del cache
-            # else:
-            #   try:
-            #       Pedir del sitio
-            #       Actualizar cache
-            #       Retornar pregunta
-            #   except:
-            #       Retornar del cache
-            pass
+            pregunta = cache[noPregunta]
+            if cacheIsValid(pregunta):
+                pass
+            else:
+                try:
+                    pregunta = obtener_preguntas(noPregunta)
+                    pregunta["lastUpdated"] = datetime.now()
+                    cache[noPregunta] = pregunta
+                except:
+                    app.logger.error(f"El web service no responde, retornando pregunta {noPregunta} del cache aunque sea invalido")
         else:
-            # try:
-            #   Pedir del sitio
-            #   retornar del sitio
-            # except:
-            #   flash('El sitio no responde y no hay cache') TODO: Detallar
-            #   redirect al dashboard
-            pass
+            try:
+                pregunta = obtener_preguntas(noPregunta)
+                pregunta["lastUpdated"] = datetime.now()
+                cache[noPregunta] = pregunta
+            except Exception as e:
+                flash('El web service no responde, y la pregunta que usted solicito'
+                      + ' no se encuentra en la cache. Porfavor intentelo de nuevo'
+                      + ' mas tarde, si el problema persiste comuniquese con el '
+                      + 'administrador del sitio')
+                app.logger.error(e)
+                return redirect(url_for('dashboard'))
 
         progress = updateLevelAndGetProgress(user)
         db.session.commit()
@@ -332,12 +342,14 @@ def actualizar_web_server():
     return redirect(url_for("mostrar_config"))
 
 
-
-# Unicamente como una utilidad ahora en el desarrollo
 @app.route("/clear-session")
 def limpiar_session():
     session.clear()
     return redirect(url_for("mostrar_login"))
+
+@app.route("/cache-state")
+def cache_state():
+    return jsonify(cache)
 
 
 # --- API de preguntas ---
@@ -347,6 +359,7 @@ def obtener_preguntas(nivel):
     data = response.read()
     dict = json.loads(data)
     return dict
+
 
 if __name__ == "__main__":
     if len(sys.argv) == 2 and sys.argv[1] == "--create-db":
