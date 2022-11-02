@@ -129,11 +129,11 @@ def mostrar_login():
 
         else:
             flash("Correo o contraseña incorrectos");
-            return render_template("login.html")
+            return render_template("Login.html")
     else:
         if "user" in session:
             return redirect(url_for('dashboard'))
-        return render_template("login.html")
+        return render_template("Login.html")
 
 
 # registro
@@ -269,7 +269,7 @@ def mostrar_amigos():
 def mostrar_perfil():
     if request.method == "GET":
         user = get_user()
-        return render_template("perfil.html", usuario=user)
+        return render_template("Perfil.html", usuario=user)
     else:
         form = request.form
         user: User = get_user()
