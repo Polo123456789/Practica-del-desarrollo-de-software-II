@@ -341,6 +341,14 @@ def actualizar_web_server():
     webServiceUrl = request.form["web_server_url"]
     return redirect(url_for("mostrar_config"))
 
+@app.route("/add-admin", methods=["POST"])
+def agregar_administrador():
+    idUser = request.form["idUser"]
+    u: User = User.query.get(idUser)
+    u.administrador = True
+    db.session.commit()
+    return redirect(url_for("mostrar_rankingAdmin"))
+
 
 @app.route("/clear-session")
 def limpiar_session():

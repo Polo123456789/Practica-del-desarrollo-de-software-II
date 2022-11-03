@@ -27,6 +27,10 @@
           <div class="flex-grow-1 ranking-list-points">
             Puntos: {{u.puntuacion}}  Intentos: {{u.intentosFallidos}}
           </div>
+          <form action="/add-admin" method="POST">
+            <input type="number" name="idUser" value="{{u.idUser}}" hidden>
+            <input class="btn btn-primary" type="submit" value="Agregar Administrador">
+          </form>
           <span class="text-muted">#{{u.idUser}}</span>
         </div>
       </li>
@@ -46,6 +50,10 @@
           <div class="flex-grow-1 ranking-list-points">
             Puntos: {{u.puntuacion}}  Intentos: {{u.intentosFallidos}}
           </div>
+          <form action="/add-admin" method="POST">
+            <input type="number" name="idUser" value="{{u.idUser}}" hidden>
+            <input class="btn btn-primary" type="submit" value="Agregar Administrador">
+          </form>
           <span class="text-muted">#{{u.idUser}}</span>
         </div>
       </li>
